@@ -1,4 +1,7 @@
-﻿using OBSWebsocketDotNet;
+﻿using Newtonsoft.Json.Linq;
+
+using OBSWebsocketDotNet;
+using OBSWebsocketDotNet.Types;
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,7 @@ namespace OBS_Twitch_Challange_BoT.Services
     {
         OBSWebsocket obsSocket;
         public bool _obsIsConnected;
-       
+
 
         public bool ObsIsConnected
         {
@@ -41,7 +44,13 @@ namespace OBS_Twitch_Challange_BoT.Services
             obsSocket.ConnectAsync($"ws://{url}:{port}", password);
             obsSocket.Connected += ObsSocket_Connected;
             obsSocket.Disconnected += ObsSocket_Disconnected;
+         
+            
+        }
 
+        private void ObsSocket_VendorEvent(object? sender, OBSWebsocketDotNet.Types.Events.VendorEventArgs e)
+        {
+            Debug.WriteLine($"{e.eventData}");
         }
 
         private void ObsSocket_Disconnected(object? sender, OBSWebsocketDotNet.Communication.ObsDisconnectionInfo e)
@@ -71,6 +80,42 @@ namespace OBS_Twitch_Challange_BoT.Services
             ObsConnectionChanged?.Invoke(isConnected);
         }
 
+        public void UpdateTextSource(string sourceName, string text)
+        {
+            var requestId = DateTime.Now.ToString();
+            JObject message = new JObject
+    {
+        { "op", 6 },
+        { "d", new JObject
+            {
+                { "requestType", "SetInputSettings" },
+                { "requestId", requestId },
+                { "inputName", sourceName },  // Input name
+                { "inputSettings", new JObject
+                    {
+                        { "text", text }  // Update the text here
+                    }
+                }
+            }
+        }
+    };
+            try
+            {
+                
+               
+
+               obsSocket.SetInputSettings(sourceName, message);
+
+            }
+            catch (Exception ex)
+            {
+
+                Debug.WriteLine($"Error ocured while trying to update text source: {ex.Message}");
+            }
+        }
+
+
+      
 
     }
 }

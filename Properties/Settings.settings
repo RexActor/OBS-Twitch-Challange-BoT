@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OBS_Twitch_Challange_BoT.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TwitchUsername" Type="System.String" Scope="User">
+      <Value Profile="(Default)">YourTwitchUsername</Value>
+    </Setting>
+    <Setting Name="TwitchAuth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TwitchAuth</Value>
+    </Setting>
+    <Setting Name="TwitchChannel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TwitchChannel</Value>
+    </Setting>
+    <Setting Name="ObsPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">455</Value>
+    </Setting>
+    <Setting Name="ObsIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="ObsPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Password</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

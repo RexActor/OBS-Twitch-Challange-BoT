@@ -18,9 +18,10 @@ namespace OBS_Twitch_Challange_BoT
             // Create an instance of ObsService
             ObsService obsService = new ObsService();
             HtmlService htmlService = new HtmlService();
+            TwitchService twitchService = new TwitchService();
 
             // Pass ObsService to MainWindow
-            MainWindow mainWindow = new MainWindow(obsService,htmlService);
+            MainWindow mainWindow = new MainWindow(obsService,htmlService,twitchService);
             mainWindow.Show();
         }
     }

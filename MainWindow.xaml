@@ -6,12 +6,18 @@
         xmlns:local="clr-namespace:OBS_Twitch_Challange_BoT"
         mc:Ignorable="d"
         Title="Obs Twitch Challenge App" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="6,-32,-6,4">
         <Button x:Name="ObsConnectBtn" HorizontalAlignment="Left" Margin="10,373,0,0" VerticalAlignment="Top" Content="Connect OBS" Click="ObsConnectBtn_Click">
 
         </Button>
-        <Label Content="OBS Connection:" HorizontalAlignment="Left" Margin="10,398,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="ObsConnectionLbl" Content="" HorizontalAlignment="Left" Margin="114,398,0,0" VerticalAlignment="Top"/>
+        <Label Content="OBS Connection:" HorizontalAlignment="Left" Margin="105,373,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="ObsConnectionLbl" Content="" HorizontalAlignment="Left" Margin="209,373,0,0" VerticalAlignment="Top"/>
+        <Label Content="Twitch Connection:" HorizontalAlignment="Left" Margin="105,398,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="TwitchConnectionLbl" Content="" HorizontalAlignment="Left" Margin="209,398,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="TwitchConnectBtn" HorizontalAlignment="Left" Margin="10,348,0,0" VerticalAlignment="Top" Content="Connect Twitch" Click="TwitchConnectBtn_Click"/>
+        <Button Content="Settings" HorizontalAlignment="Left" Margin="686,36,0,0" VerticalAlignment="Top" Width="104" Click="Button_Click"/>
+        <ContentControl x:Name="MainContentControl" Background="Green" Height="300" Margin="10,36,119,126"/>
+
 
     </Grid>
 </Window>
