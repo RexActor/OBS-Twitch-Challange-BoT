@@ -70,6 +70,7 @@ namespace OBS_Twitch_Challange_BoT.Services
         private void Client_OnConnected(object? sender, TwitchLib.Client.Events.OnConnectedArgs e)
         {
             TwitchIsConnected = twitchClient.IsConnected;
+           
         }
 
         private void Client_OnMessageReceived(object? sender, TwitchLib.Client.Events.OnMessageReceivedArgs e)

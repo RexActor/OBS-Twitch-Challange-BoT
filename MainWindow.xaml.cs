@@ -80,6 +80,7 @@ namespace OBS_Twitch_Challange_BoT
         private void TwitchConnectBtn_Click(object sender, RoutedEventArgs e)
         {
             _twitchService.ConnectToTwitch();
+           
             _obsService.UpdateTextSource("Challange", "Hello there");
         }
         private void TwitchDisconnectBtn_Click(object sender, RoutedEventArgs e)

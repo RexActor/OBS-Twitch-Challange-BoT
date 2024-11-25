@@ -44,8 +44,8 @@ namespace OBS_Twitch_Challange_BoT.Services
             obsSocket.ConnectAsync($"ws://{url}:{port}", password);
             obsSocket.Connected += ObsSocket_Connected;
             obsSocket.Disconnected += ObsSocket_Disconnected;
-         
-            
+
+
         }
 
         private void ObsSocket_VendorEvent(object? sender, OBSWebsocketDotNet.Types.Events.VendorEventArgs e)
@@ -90,10 +90,16 @@ namespace OBS_Twitch_Challange_BoT.Services
             {
                 { "requestType", "SetInputSettings" },
                 { "requestId", requestId },
-                { "inputName", sourceName },  // Input name
-                { "inputSettings", new JObject
+                  // Input name
+                { "requestData", new JObject
                     {
-                        { "text", text }  // Update the text here
+                    { "inputName", sourceName },
+                    {"inputSettings",new JObject
+                         {
+                              { "text", text }  // Update the text here          
+                         }
+                    }
+
                     }
                 }
             }
@@ -101,10 +107,13 @@ namespace OBS_Twitch_Challange_BoT.Services
     };
             try
             {
-                
-               
 
-               obsSocket.SetInputSettings(sourceName, message);
+
+
+
+
+                obsSocket.SendRequest("SetInputSettings", message);
+                //  obsSocket.SetInputSettings(sourceName, message);
 
             }
             catch (Exception ex)
@@ -115,7 +124,7 @@ namespace OBS_Twitch_Challange_BoT.Services
         }
 
 
-      
+
 
     }
 }
