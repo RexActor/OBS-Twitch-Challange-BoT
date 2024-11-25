@@ -13,118 +13,97 @@ using System.Threading.Tasks;
 
 namespace OBS_Twitch_Challange_BoT.Services
 {
-    public class ObsService
-    {
-        OBSWebsocket obsSocket;
-        public bool _obsIsConnected;
+	public class ObsService
+	{
+		OBSWebsocket obsSocket;
+		public bool _obsIsConnected;
 
 
-        public bool ObsIsConnected
-        {
-            get => _obsIsConnected;
-            private set
-            {
-                if (_obsIsConnected != value)
-                {
-                    _obsIsConnected = value;
-                    OnObsConnectionChanged(_obsIsConnected);
-                }
-            }
-        }
+		public bool ObsIsConnected
+		{
+			get => _obsIsConnected;
+			private set
+			{
+				if (_obsIsConnected != value)
+				{
+					_obsIsConnected = value;
+					OnObsConnectionChanged(_obsIsConnected);
+				}
+			}
+		}
 
-        // Event for connection status changes
-        public event Action<bool> ObsConnectionChanged;
-
-
-        public void ConnectWebSocket(string url, int port, string password)
-        {
-
-            obsSocket = new OBSWebsocket();
-            Debug.WriteLine("Connecting to obs....");
-            obsSocket.ConnectAsync($"ws://{url}:{port}", password);
-            obsSocket.Connected += ObsSocket_Connected;
-            obsSocket.Disconnected += ObsSocket_Disconnected;
+		// Event for connection status changes
+		public event Action<bool> ObsConnectionChanged;
 
 
-        }
+		public void ConnectWebSocket(string url, int port, string password)
+		{
 
-        private void ObsSocket_VendorEvent(object? sender, OBSWebsocketDotNet.Types.Events.VendorEventArgs e)
-        {
-            Debug.WriteLine($"{e.eventData}");
-        }
+			obsSocket = new OBSWebsocket();
+			Debug.WriteLine("Connecting to obs....");
+			obsSocket.ConnectAsync($"ws://{url}:{port}", password);
+			obsSocket.Connected += ObsSocket_Connected;
+			obsSocket.Disconnected += ObsSocket_Disconnected;
 
-        private void ObsSocket_Disconnected(object? sender, OBSWebsocketDotNet.Communication.ObsDisconnectionInfo e)
-        {
-            ObsIsConnected = obsSocket.IsConnected;
-        }
 
-        public void DisconnectWebSocket()
-        {
-            if (obsSocket.IsConnected)
-            {
-                obsSocket.Disconnect();
-            }
-            else
-            {
-                return;
-            }
-        }
+		}
 
-        private void ObsSocket_Connected(object? sender, EventArgs e)
-        {
-            ObsIsConnected = obsSocket.IsConnected;
-        }
+		private void ObsSocket_VendorEvent(object? sender, OBSWebsocketDotNet.Types.Events.VendorEventArgs e)
+		{
+			Debug.WriteLine($"{e.eventData}");
+		}
 
-        protected virtual void OnObsConnectionChanged(bool isConnected)
-        {
-            ObsConnectionChanged?.Invoke(isConnected);
-        }
+		private void ObsSocket_Disconnected(object? sender, OBSWebsocketDotNet.Communication.ObsDisconnectionInfo e)
+		{
+			ObsIsConnected = obsSocket.IsConnected;
+			Debug.WriteLine($"Disconected from OBS websocket - Reason: {e.DisconnectReason}");
+		}
 
-        public void UpdateTextSource(string sourceName, string text)
-        {
-            var requestId = DateTime.Now.ToString();
-            JObject message = new JObject
-    {
-        { "op", 6 },
-        { "d", new JObject
-            {
-                { "requestType", "SetInputSettings" },
-                { "requestId", requestId },
-                  // Input name
-                { "requestData", new JObject
-                    {
-                    { "inputName", sourceName },
-                    {"inputSettings",new JObject
-                         {
-                              { "text", text }  // Update the text here          
-                         }
-                    }
+		public void DisconnectWebSocket()
+		{
+			if (obsSocket.IsConnected)
+			{
+				obsSocket.Disconnect();
+			}
+			else
+			{
+				return;
+			}
+		}
 
-                    }
-                }
-            }
-        }
-    };
-            try
-            {
+		private void ObsSocket_Connected(object? sender, EventArgs e)
+		{
+			ObsIsConnected = obsSocket.IsConnected;
+		}
+
+		protected virtual void OnObsConnectionChanged(bool isConnected)
+		{
+			ObsConnectionChanged?.Invoke(isConnected);
+		}
+
+		public void UpdateTextSource(string sourceName, string text)
+		{
+			
+			JObject message = new JObject
+			{
+				{ "text", text }
+			};
+
+
+			try
+			{
+				obsSocket.SetInputSettings(sourceName, message, false);
+
+			}
+			catch (Exception ex)
+			{
+
+				Debug.WriteLine($"Error ocured while trying to update text source: {ex.Message}");
+			}
+		}
 
 
 
 
-
-                obsSocket.SendRequest("SetInputSettings", message);
-                //  obsSocket.SetInputSettings(sourceName, message);
-
-            }
-            catch (Exception ex)
-            {
-
-                Debug.WriteLine($"Error ocured while trying to update text source: {ex.Message}");
-            }
-        }
-
-
-
-
-    }
+	}
 }

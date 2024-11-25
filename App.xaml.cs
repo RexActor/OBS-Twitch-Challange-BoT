@@ -1,29 +1,50 @@
-﻿using OBS_Twitch_Challange_BoT.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using OBS_Twitch_Challange_BoT.Services;
 
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace OBS_Twitch_Challange_BoT
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
+	/// <summary>
+	/// Interaction logic for App.xaml
+	/// </summary>
+	public partial class App : Application
+	   
+	{
 
-            // Create an instance of ObsService
-            ObsService obsService = new ObsService();
-            HtmlService htmlService = new HtmlService();
-            TwitchService twitchService = new TwitchService();
+		public static ServiceProvider ServiceProvider { get; private set; }
 
-            // Pass ObsService to MainWindow
-            MainWindow mainWindow = new MainWindow(obsService,htmlService,twitchService);
-            mainWindow.Show();
-        }
-    }
+		protected override void OnStartup(StartupEventArgs e)
+		{
+		  
+
+			var services = new ServiceCollection();
+			ConfigureServices(services);
+			ServiceProvider=services.BuildServiceProvider();
+
+
+
+			// Pass ObsService to MainWindow
+			var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+			mainWindow.Show();
+
+			base.OnStartup(e);
+		}
+
+		private void ConfigureServices(IServiceCollection services)
+		{
+			services.AddSingleton<ObsService>();
+			services.AddSingleton<HtmlService>();
+			services.AddSingleton<TwitchService>();
+			services.AddTransient<MainWindow>();
+		
+			
+		}
+
+	}
 
 }

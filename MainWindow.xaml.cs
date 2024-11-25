@@ -15,84 +15,128 @@ using System.Windows.Shapes;
 
 namespace OBS_Twitch_Challange_BoT
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        private readonly ObsService _obsService;
-        private readonly HtmlService _htmlService;
-        private readonly TwitchService _twitchService;
-        // Parameterless constructor for WPF
-        public MainWindow() : this(new ObsService(), new HtmlService(), new TwitchService()) { }
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
+	{
+		private readonly ObsService _obsService;
+		private readonly HtmlService _htmlService;
+		private readonly TwitchService _twitchService;
+		
+		// Parameterless constructor for WPF
+		public MainWindow() : this(new ObsService(), new HtmlService(), null)
+		{
+			_twitchService = new TwitchService(_obsService);
 
-        public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService)
-        {
+		}
 
-            InitializeComponent();
-            _htmlService = htmlService;
-            _obsService = obsService;
-            _twitchService = twitchService;
-            _obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
-            _twitchService.TwitchConnectionChanged += _twitchService_TwitchConnectionChanged;
-            _htmlService.GenerateHTMLFile("Index.html");
+		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService  )
+		{
 
-        }
+			InitializeComponent();
+			_htmlService = htmlService;
+			_obsService = obsService;
+			_twitchService = twitchService;
+			
 
-        private void _twitchService_TwitchConnectionChanged(bool obj)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                TwitchConnectionLbl.Content = obj ? "Connected" : "Disconnected";
-                TwitchConnectBtn.Content = obj ? "Disconnect Twitch" : "Connect to Twitch";
-                TwitchConnectionLbl.Foreground = new SolidColorBrush(obj ? Color.FromRgb(34, 139, 34) : Color.FromRgb(220, 20, 60));
-                TwitchConnectBtn.Click -= TwitchConnectBtn_Click;
-                TwitchConnectBtn.Click += TwitchDisconnectBtn_Click;
+			_obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
+			_twitchService.TwitchConnectionChanged += _twitchService_TwitchConnectionChanged;
+			_htmlService.GenerateHTMLFile("Index.html");
+			
+		}
 
-
-            });
-        }
-
-        private void _obsService_ObsConnectionChanged(bool obj)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                ObsConnectionLbl.Content = obj ? "Connected" : "Disconnected";
-                ObsConnectBtn.Content = obj ? "Disconnect OBS" : "Connect to OBS";
-                ObsConnectionLbl.Foreground = new SolidColorBrush(obj ? Color.FromRgb(34, 139, 34) : Color.FromRgb(220, 20, 60));
-                ObsConnectBtn.Click -= ObsConnectBtn_Click;
-                ObsConnectBtn.Click += ObsConnectBtn_Disconnect;
-            });
-        }
-
-        private void ObsConnectBtn_Disconnect(object sender, RoutedEventArgs e)
-        {
-            _obsService.DisconnectWebSocket();
-        }
-
-        private void ObsConnectBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-            _obsService.ConnectWebSocket(Properties.Settings.Default.ObsIP, Properties.Settings.Default.ObsPort, Properties.Settings.Default.ObsPassword);
-
-        }
-
-        private void TwitchConnectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            _twitchService.ConnectToTwitch();
-           
-            _obsService.UpdateTextSource("Challange", "Hello there");
-        }
-        private void TwitchDisconnectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            _twitchService.Disconnect();
-
-        }
+		private void _twitchService_TwitchConnectionChanged(bool obj)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				TwitchConnectionLbl.Content = obj ? "Connected" : "Disconnected";
+				TwitchConnectBtn.Content = obj ? "Disconnect Twitch" : "Connect to Twitch";
+				TwitchConnectionLbl.Foreground = new SolidColorBrush(obj ? Color.FromRgb(34, 139, 34) : Color.FromRgb(220, 20, 60));
 
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MainContentControl.Content = new OptionsPage();
-        }
-    }
+				if (obj)
+				{
+
+					TwitchConnectBtn.Click -= TwitchConnectBtn_Click;
+					TwitchConnectBtn.Click += TwitchDisconnectBtn_Click;
+				}
+				else
+				{
+					TwitchConnectBtn.Click += TwitchConnectBtn_Click;
+					TwitchConnectBtn.Click -= TwitchDisconnectBtn_Click;
+				}
+
+
+
+
+			});
+		}
+
+		private void _obsService_ObsConnectionChanged(bool obj)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				ObsConnectionLbl.Content = obj ? "Connected" : "Disconnected";
+				ObsConnectBtn.Content = obj ? "Disconnect OBS" : "Connect to OBS";
+				ObsConnectionLbl.Foreground = new SolidColorBrush(obj ? Color.FromRgb(34, 139, 34) : Color.FromRgb(220, 20, 60));
+
+				if (obj)
+				{
+					ObsConnectBtn.Click -= ObsConnectBtn_Click;
+					ObsConnectBtn.Click += ObsConnectBtn_Disconnect;
+				}
+				else
+				{
+					ObsConnectBtn.Click += ObsConnectBtn_Click;
+					ObsConnectBtn.Click -= ObsConnectBtn_Disconnect;
+				}
+				
+				
+			});
+		}
+
+		private void ObsConnectBtn_Disconnect(object sender, RoutedEventArgs e)
+		{
+		
+			_obsService.DisconnectWebSocket();
+			
+		}
+
+		private void ObsConnectBtn_Click(object sender, RoutedEventArgs e)
+		{
+
+			_obsService.ConnectWebSocket(Properties.Settings.Default.ObsIP, Properties.Settings.Default.ObsPort, Properties.Settings.Default.ObsPassword);
+			
+
+		}
+
+		private void TwitchConnectBtn_Click(object sender, RoutedEventArgs e)
+		{
+			_twitchService.ConnectToTwitch();
+		
+
+			_obsService.UpdateTextSource("Challange Title", "Hello there");
+		}
+		private void TwitchDisconnectBtn_Click(object sender, RoutedEventArgs e)
+		{
+			
+			_twitchService.Disconnect();
+
+		}
+
+
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			MainContentControl.Content = new OptionsPage();
+		}
+
+
+
+		private void ConsoleBtn_Click(object sender, RoutedEventArgs e)
+		{
+		
+		}
+	}
 }
