@@ -14,6 +14,7 @@ namespace OBS_Twitch_Challange_BoT.Services
     {
         OBSWebsocket obsSocket;
         public bool _obsIsConnected;
+       
 
         public bool ObsIsConnected
         {

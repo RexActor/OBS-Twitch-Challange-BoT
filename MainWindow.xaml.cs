@@ -21,15 +21,19 @@ namespace OBS_Twitch_Challange_BoT
     public partial class MainWindow : Window
     {
         private readonly ObsService _obsService;
+        private readonly HtmlService _htmlService;
         // Parameterless constructor for WPF
-        public MainWindow() : this(new ObsService()) { }
+        public MainWindow() : this(new ObsService(),new HtmlService()) { }
 
-        public  MainWindow(ObsService obsService)
+        public  MainWindow(ObsService obsService,HtmlService htmlService)
         {
 
             InitializeComponent();
+            _htmlService = htmlService;
            _obsService = obsService;
             _obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
+            _htmlService.GenerateHTMLFile("Index.html");
+           
         }
 
         private void _obsService_ObsConnectionChanged(bool obj)

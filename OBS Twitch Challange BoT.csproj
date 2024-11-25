@@ -20,4 +20,10 @@
     <Folder Include="Other Files\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Html\Index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
