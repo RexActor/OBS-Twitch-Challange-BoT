@@ -116,7 +116,7 @@ namespace OBS_Twitch_Challange_BoT
 			_twitchService.ConnectToTwitch();
 		
 
-			_obsService.UpdateTextSource("Challange Title", "Hello there");
+			
 		}
 		private void TwitchDisconnectBtn_Click(object sender, RoutedEventArgs e)
 		{

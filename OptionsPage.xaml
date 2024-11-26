@@ -10,20 +10,20 @@
         <Label Content="Twitch Username" HorizontalAlignment="Left" Margin="22,29,0,0" VerticalAlignment="Top"/>
         <Label Content="Twitch Auth" HorizontalAlignment="Left" Margin="22,60,0,0" VerticalAlignment="Top"/>
         <Label Content="Twitch Channel" HorizontalAlignment="Left" Margin="22,91,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="TwitchUserNameTextBox"  HorizontalAlignment="Left" Margin="127,37,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TwitchAuthTextBox" HorizontalAlignment="Left" Margin="127,68,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="TwitchChannelTextBox" HorizontalAlignment="Left" Margin="127,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="TwitchUserNameTextBox"  HorizontalAlignment="Left" Margin="127,37,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183"/>
+        <PasswordBox x:Name="TwitchAuthTextBox"  HorizontalAlignment="Left" Margin="127,68,0,0" Password="TextBox" VerticalAlignment="Top" Width="183"/>
+        <TextBox x:Name="TwitchChannelTextBox" HorizontalAlignment="Left" Margin="127,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183"/>
 
         <Separator HorizontalAlignment="Left" Margin="319,125,0,0" VerticalAlignment="Top" Background="Red"/>
 
-        <Label Content="OBS Address" HorizontalAlignment="Left" Margin="385,38,0,0" VerticalAlignment="Top"/>
-        <Label Content="OBS Port" HorizontalAlignment="Left" Margin="385,69,0,0" VerticalAlignment="Top"/>
-        <Label Content="OBS Password" HorizontalAlignment="Left" Margin="385,100,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="ObsAddressTextBox"  HorizontalAlignment="Left" Margin="490,46,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="ObsPortTextBox" HorizontalAlignment="Left" Margin="490,77,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="490,108,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Label Content="OBS Address" HorizontalAlignment="Left" Margin="22,127,0,0" VerticalAlignment="Top"/>
+        <Label Content="OBS Port" HorizontalAlignment="Left" Margin="22,158,0,0" VerticalAlignment="Top"/>
+        <Label Content="OBS Password" HorizontalAlignment="Left" Margin="22,189,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="ObsAddressTextBox"  HorizontalAlignment="Left" Margin="127,135,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183"/>
+        <TextBox x:Name="ObsPortTextBox" HorizontalAlignment="Left" Margin="127,166,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183"/>
+        <PasswordBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="127,197,0,0"  Password="TextBox" VerticalAlignment="Top" Width="183"/>
 
-        <Button x:Name="SaveTwitchSettingsBtn" Content="Save" HorizontalAlignment="Left" Margin="319,205,0,0" VerticalAlignment="Top" Click="SaveTwitchSettingsBtn_Click" Width="105"/>
+        <Button x:Name="SaveTwitchSettingsBtn" Content="Save" HorizontalAlignment="Left" Margin="155,235,0,0" VerticalAlignment="Top" Click="SaveTwitchSettingsBtn_Click" Width="105"/>
 
     </Grid>
 </UserControl>

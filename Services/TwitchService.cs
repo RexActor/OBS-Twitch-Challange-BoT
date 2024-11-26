@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.Client;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
@@ -125,23 +126,43 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		private void Client_OnMessageReceived(object? sender, TwitchLib.Client.Events.OnMessageReceivedArgs e)
 		{
+
+
+
 			Debug.WriteLine($"{e.ChatMessage.DisplayName}: {e.ChatMessage.Message}");
 			// Respond to a specific message (e.g., '!hello')
 			if (e.ChatMessage.Message.Equals("!hello", StringComparison.InvariantCultureIgnoreCase))
 			{
 				((TwitchClient)sender).SendMessage(e.ChatMessage.Channel, "Hello, " + e.ChatMessage.DisplayName + "!");
-				_obsService.UpdateTextSource("Challange Desc", e.ChatMessage.Message.Split(" ").Skip(1).ToString());
+				
 
 			}
 
 			if (e.ChatMessage.Message.Equals("!leave", StringComparison.InvariantCultureIgnoreCase))
 			{
-				((TwitchClient)sender).SendMessage(e.ChatMessage.Channel, PickLeaveMessage());
+				if (e.ChatMessage.IsMe)
+				{
+                    ((TwitchClient)sender).SendMessage(e.ChatMessage.Channel, "I'm not responding on my own requests you dum dum!");
+                }
+
+                if ( e.ChatMessage.IsModerator)
+				{
+
+                    ((TwitchClient)sender).SendMessage(e.ChatMessage.Channel, PickLeaveMessage());
+                    Disconnect();
+				}
+				else
+				{
+                    ((TwitchClient)sender).SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName} who are you to tell me what to do?! Do you want to be timed out?");
+                }
 
 
 			}
 
 		}
+
+		
+
 
 
 		private string PickLeaveMessage()
