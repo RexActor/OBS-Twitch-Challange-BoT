@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="OBS_Twitch_Challange_BoT.CommandPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OBS_Twitch_Challange_BoT"
+             mc:Ignorable="d" 
+            
+             d:DesignHeight="450" d:DesignWidth="800" Background="Wheat" ScrollViewer.CanContentScroll="True">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="19*"/>
+            <ColumnDefinition Width="21*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.ColumnSpan="2" x:Name="CommandListBox" VerticalAlignment="Top" Height="200" Margin="10,10,10,0"/>
+        <TextBox Grid.Column="0" x:Name="CommandTextBox" Margin="10,224,10,0" VerticalAlignment="Top" Height="18"/>
+        <TextBox Grid.Column="0" x:Name="ResponseTextBox" Margin="10,254,10,0" VerticalAlignment="Top" Height="18"/>
+
+        <Button Grid.Column="1" x:Name="AddCommandBtn" Content="Add Command" Margin="20,227,270,0" VerticalAlignment="Top" Click="AddCommandBtn_Click" Height="20"/>
+        <Button Grid.Column="1" x:Name="RemoveCommandBtn" Content="Remove Command" Margin="20,263,270,0" VerticalAlignment="Top" Click="RemoveCommandBtn_Click" Height="20"/>
+
+
+    </Grid>
+</UserControl>

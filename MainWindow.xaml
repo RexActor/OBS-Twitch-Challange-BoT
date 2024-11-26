@@ -4,21 +4,54 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OBS_Twitch_Challange_BoT"
-        mc:Ignorable="d"
-        Title="Obs Twitch Challenge App" Height="450" Width="800">
-    <Grid Margin="6,-32,-6,4">
-        <Button x:Name="ObsConnectBtn" HorizontalAlignment="Left" Margin="10,373,0,0" VerticalAlignment="Top" Content="Connect OBS" Click="ObsConnectBtn_Click">
+        mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="900"
+        Title="Obs Twitch Challenge App" Height="600" Width="900" ResizeMode="NoResize">
 
-        </Button>
-        <Label Content="OBS Connection:" HorizontalAlignment="Left" Margin="105,373,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="ObsConnectionLbl" Content="" HorizontalAlignment="Left" Margin="209,373,0,0" VerticalAlignment="Top"/>
-        <Label Content="Twitch Connection:" HorizontalAlignment="Left" Margin="105,398,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="TwitchConnectionLbl" Content="" HorizontalAlignment="Left" Margin="209,398,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="TwitchConnectBtn" HorizontalAlignment="Left" Margin="10,348,0,0" VerticalAlignment="Top" Content="Connect Twitch" Click="TwitchConnectBtn_Click"/>
-        <Button Content="Settings" HorizontalAlignment="Left" Margin="686,36,0,0" VerticalAlignment="Top" Width="104" Click="Button_Click"/>
-        <ContentControl x:Name="MainContentControl" Background="Green" Height="300" Margin="10,36,119,126"/>
-        <Button x:Name="ConsoleBtn" Content="Console" HorizontalAlignment="Left" Margin="686,61,0,0" VerticalAlignment="Top" Width="104" Click="ConsoleBtn_Click" />
-       
+    <Grid>
+        <!-- Define Rows and Columns -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Row for the OBS Connect Button -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row for the Twitch Connect Button -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row for the OBS Status -->
+            <RowDefinition Height="Auto"/>
+            <!-- Row for the Twitch Status -->
+            <RowDefinition Height="*"/>
+            <!-- Row for MainContentControl (fills available space) -->
+        </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <!-- Column for Left Alignment -->
+            <ColumnDefinition Width="*"/>
+            <!-- Column for Center Alignment -->
+            <ColumnDefinition Width="Auto"/>
+            <!-- Column for Right Alignment -->
+        </Grid.ColumnDefinitions>
+
+        <!-- OBS Connect Button -->
+        <Button x:Name="ObsConnectBtn" Content="Connect OBS" Grid.Row="0" Grid.Column="1" Margin="99,10,0,10" HorizontalAlignment="Left" Click="ObsConnectBtn_Click"/>
+
+        <!-- Twitch Connect Button -->
+        <Button x:Name="TwitchConnectBtn" Content="Connect Twitch" Grid.Row="1" Grid.Column="1" Margin="99,10,0,10" HorizontalAlignment="Left" Click="TwitchConnectBtn_Click"/>
+
+        <!-- OBS Status Label -->
+        <Label Content="OBS Status:" Grid.Column="0" Margin="10,10,10,0" VerticalAlignment="Top"/>
+        <Label x:Name="ObsConnectionLbl" Content="" Grid.Column="1" Margin="10,0,666,0" VerticalAlignment="Center"/>
+
+        <!-- Twitch Status Label -->
+        <Label Content="Twitch Status:" Grid.Row="1" Grid.Column="0" Margin="10,2,10,0" VerticalAlignment="Top"/>
+        <Label x:Name="TwitchConnectionLbl" Content="" Grid.Row="1" Grid.Column="1" Margin="10,4,601,0" VerticalAlignment="Top"/>
+
+        <!-- Settings Button -->
+        <Button Content="Settings" Grid.Row="0" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Click="Button_Click"/>
+
+        <!-- Main Content Control (can be used to display dynamic content like commands) -->
+        <ContentControl x:Name="MainContentControl" Background="Green" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="10"/>
+
+        <!-- Commands Button -->
+        <Button x:Name="CommandsBtn" Content="Commands" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Click="CommandsBtn_Click"/>
     </Grid>
 </Window>

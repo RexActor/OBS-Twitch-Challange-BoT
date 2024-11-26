@@ -134,9 +134,9 @@ namespace OBS_Twitch_Challange_BoT
 
 
 
-		private void ConsoleBtn_Click(object sender, RoutedEventArgs e)
+		private void CommandsBtn_Click(object sender, RoutedEventArgs e)
 		{
-		
+			MainContentControl.Content=new CommandPage();
 		}
 	}
 }
