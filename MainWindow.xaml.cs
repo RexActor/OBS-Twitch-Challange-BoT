@@ -23,7 +23,7 @@ namespace OBS_Twitch_Challange_BoT
 		private readonly ObsService _obsService;
 		private readonly HtmlService _htmlService;
 		private readonly TwitchService _twitchService;
-		
+
 		// Parameterless constructor for WPF
 		public MainWindow() : this(new ObsService(), new HtmlService(), null)
 		{
@@ -31,19 +31,22 @@ namespace OBS_Twitch_Challange_BoT
 
 		}
 
-		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService  )
+		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService)
 		{
 
 			InitializeComponent();
 			_htmlService = htmlService;
 			_obsService = obsService;
 			_twitchService = twitchService;
-			
+
 
 			_obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
 			_twitchService.TwitchConnectionChanged += _twitchService_TwitchConnectionChanged;
 			_htmlService.GenerateHTMLFile("Index.html");
-			
+
+			InitializeCommandsTab();
+			InitializeSettingsTab();
+
 		}
 
 		private void _twitchService_TwitchConnectionChanged(bool obj)
@@ -91,52 +94,68 @@ namespace OBS_Twitch_Challange_BoT
 					ObsConnectBtn.Click += ObsConnectBtn_Click;
 					ObsConnectBtn.Click -= ObsConnectBtn_Disconnect;
 				}
-				
-				
+
+
 			});
 		}
 
 		private void ObsConnectBtn_Disconnect(object sender, RoutedEventArgs e)
 		{
-		
+
 			_obsService.DisconnectWebSocket();
-			
+
 		}
 
 		private void ObsConnectBtn_Click(object sender, RoutedEventArgs e)
 		{
 
 			_obsService.ConnectWebSocket(Properties.Settings.Default.ObsIP, Properties.Settings.Default.ObsPort, Properties.Settings.Default.ObsPassword);
-			
+
 
 		}
 
 		private void TwitchConnectBtn_Click(object sender, RoutedEventArgs e)
 		{
 			_twitchService.ConnectToTwitch();
-		
 
-			
+
+
 		}
 		private void TwitchDisconnectBtn_Click(object sender, RoutedEventArgs e)
 		{
-			
+
 			_twitchService.Disconnect();
 
 		}
 
 
-
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void InitializeSettingsTab()
 		{
-			MainContentControl.Content = new OptionsPage(_obsService);
+			SettingsContentControl.Content = new OptionsPage(_obsService);
+
 		}
 
-
-
-		private void CommandsBtn_Click(object sender, RoutedEventArgs e)
+		private void InitializeCommandsTab()
 		{
-			MainContentControl.Content=new CommandPage();
+			CommandsContentControl.Content = new CommandPage();
+		}
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+			if (MainTabControl.SelectedItem is TabItem selectedTab && selectedTab.Header.ToString() == "Settings")
+			{
+				if (SettingsContentControl.Content is OptionsPage optionsPage)
+				{
+
+					
+					
+					//optionsPage.ReloadSettings();          // Reload settings
+
+
+				}
+
+			}
 		}
 	}
 }

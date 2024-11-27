@@ -10,13 +10,13 @@
 
         <GroupBox Header="Twitch Settings" Margin="10,10,500,300">
             <Grid>
-                
-                <Label Content="Twitch Username" HorizontalAlignment="Left" Margin="22,29,0,0" VerticalAlignment="Top"/>
-                <Label Content="Twitch Auth" HorizontalAlignment="Left" Margin="22,60,0,0" VerticalAlignment="Top"/>
-                <Label Content="Twitch Channel" HorizontalAlignment="Left" Margin="22,91,0,0" VerticalAlignment="Top"/>
-                <TextBox x:Name="TwitchUserNameTextBox"  HorizontalAlignment="Left" Margin="127,37,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183"/>
-                <PasswordBox x:Name="TwitchAuthTextBox"  HorizontalAlignment="Left" Margin="127,68,0,0" Password="TextBox" VerticalAlignment="Top" Width="183" />
-                <TextBox x:Name="TwitchChannelTextBox" HorizontalAlignment="Left" Margin="127,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183" />
+
+                <Label Content="Twitch Username" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <Label Content="Twitch Auth" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+                <Label Content="Twitch Channel" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+                <TextBox x:Name="TwitchUserNameTextBox"  HorizontalAlignment="Left" Margin="110,15,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183"/>
+                <PasswordBox x:Name="TwitchAuthTextBox"  HorizontalAlignment="Left" Margin="110,45,0,0" Password="TextBox" VerticalAlignment="Top" Width="183" />
+                <TextBox x:Name="TwitchChannelTextBox" HorizontalAlignment="Left" Margin="110,75,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183" />
 
 
 
@@ -24,21 +24,21 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="OBS Settings" Margin="10,170,500,150">
+        <GroupBox Header="OBS Settings" Margin="10,240,500,150">
             <Grid Margin="-1,0,1,0">
-                <Label Content="OBS Address" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
-                <Label Content="OBS Port" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="55"/>
-                <Label Content="OBS Password" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="81"/>
-                <TextBox x:Name="ObsAddressTextBox"  HorizontalAlignment="Left" Margin="110,18,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
-                <TextBox x:Name="ObsPortTextBox" HorizontalAlignment="Left" Margin="110,49,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
-                <PasswordBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="110,80,0,0"  Password="TextBox" VerticalAlignment="Top" Width="175"/>
+                <Label Content="OBS Address" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90"/>
+                <Label Content="OBS Port" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="90"/>
+                <Label Content="OBS Password" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="90"/>
+                <TextBox x:Name="ObsAddressTextBox"  HorizontalAlignment="Left" Margin="110,15,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+                <TextBox x:Name="ObsPortTextBox" HorizontalAlignment="Left" Margin="110,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+                <PasswordBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="110,75,0,0"  Password="TextBox" VerticalAlignment="Top" Width="175"/>
 
             </Grid>
         </GroupBox >
 
 
 
-        <GroupBox Header="Obs Sources" Margin="380,10,10,185">
+        <GroupBox Header="Obs Sources" Margin="400,10,0,300">
             <Grid>
                 <ComboBox x:Name="SceneComboBox"   HorizontalAlignment="Left" Margin="84,18,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="SceneComboBox_SelectionChanged"/>
                 <ComboBox x:Name="SourceComboBox"   IsEnabled="False" HorizontalAlignment="Left" Margin="84,58,0,0" VerticalAlignment="Top" Width="120"  SelectionChanged="SourceComboBox_SelectionChanged"/>

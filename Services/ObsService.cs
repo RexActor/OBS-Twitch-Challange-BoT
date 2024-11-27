@@ -148,8 +148,8 @@ namespace OBS_Twitch_Challange_BoT.Services
 
             try
             {
-                 var sceneList = obsSocket.GetSceneList();
-                SceneItems= sceneList.Scenes.Select(scene=>scene.Name).ToList();
+                 var sceneList = obsSocket?.GetSceneList();
+                SceneItems= sceneList?.Scenes.Select(scene=>scene.Name).ToList();
             }
             catch (Exception ex)
             {

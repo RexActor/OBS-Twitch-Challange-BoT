@@ -8,50 +8,34 @@
         Title="Obs Twitch Challenge App" Height="600" Width="900" ResizeMode="NoResize">
 
     <Grid>
-        <!-- Define Rows and Columns -->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- Row for the OBS Connect Button -->
-            <RowDefinition Height="Auto"/>
-            <!-- Row for the Twitch Connect Button -->
-            <RowDefinition Height="Auto"/>
-            <!-- Row for the OBS Status -->
-            <RowDefinition Height="Auto"/>
-            <!-- Row for the Twitch Status -->
-            <RowDefinition Height="*"/>
-            <!-- Row for MainContentControl (fills available space) -->
-        </Grid.RowDefinitions>
+        <TabControl x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+            <!-- OBS Tab -->
+            <TabItem Header="OBS">
+                <Grid>
+                    <Button x:Name="ObsConnectBtn" Content="Connect OBS" HorizontalAlignment="Left" Margin="20,10,0,10" VerticalAlignment="Top" Click="ObsConnectBtn_Click"/>
+                    <Label Content="OBS Status:" Margin="10,50,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="ObsConnectionLbl" Content="" Margin="100,50,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <!-- Column for Left Alignment -->
-            <ColumnDefinition Width="*"/>
-            <!-- Column for Center Alignment -->
-            <ColumnDefinition Width="Auto"/>
-            <!-- Column for Right Alignment -->
-        </Grid.ColumnDefinitions>
+            <!-- Twitch Tab -->
+            <TabItem Header="Twitch">
+                <Grid>
+                    <Button x:Name="TwitchConnectBtn" Content="Connect Twitch" HorizontalAlignment="Left" Margin="20,10,0,10" VerticalAlignment="Top" Click="TwitchConnectBtn_Click"/>
+                    <Label Content="Twitch Status:" Margin="10,50,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="TwitchConnectionLbl" Content="" Margin="100,50,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
 
-        <!-- OBS Connect Button -->
-        <Button x:Name="ObsConnectBtn" Content="Connect OBS" Grid.Row="0" Grid.Column="1" Margin="99,10,0,10" HorizontalAlignment="Left" Click="ObsConnectBtn_Click"/>
+            <!-- Settings Tab -->
+            <TabItem Header="Settings">
+                <ContentControl x:Name="SettingsContentControl"/>
+            </TabItem>
 
-        <!-- Twitch Connect Button -->
-        <Button x:Name="TwitchConnectBtn" Content="Connect Twitch" Grid.Row="1" Grid.Column="1" Margin="99,10,0,10" HorizontalAlignment="Left" Click="TwitchConnectBtn_Click"/>
-
-        <!-- OBS Status Label -->
-        <Label Content="OBS Status:" Grid.Column="0" Margin="10,10,10,0" VerticalAlignment="Top"/>
-        <Label x:Name="ObsConnectionLbl" Content="" Grid.Column="1" Margin="0,0,620,0" VerticalAlignment="Center"/>
-
-        <!-- Twitch Status Label -->
-        <Label Content="Twitch Status:" Grid.Row="1" Grid.Column="0" Margin="10,2,10,0" VerticalAlignment="Top"/>
-        <Label x:Name="TwitchConnectionLbl" Content="" Grid.Row="1" Grid.Column="1" Margin="0,4,611,0" VerticalAlignment="Top"/>
-
-        <!-- Settings Button -->
-        <Button Content="Settings" Grid.Row="0" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Click="Button_Click"/>
-
-        <!-- Main Content Control (can be used to display dynamic content like commands) -->
-        <ContentControl x:Name="MainContentControl" Background="Green" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="10"/>
-
-        <!-- Commands Button -->
-        <Button x:Name="CommandsBtn" Content="Commands" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Click="CommandsBtn_Click"/>
+            <!-- Commands Tab -->
+            <TabItem Header="Commands">
+                <ContentControl x:Name="CommandsContentControl"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
