@@ -251,7 +251,7 @@ class WebSocketClient {
 const wsClient = new WebSocketClient('ws://localhost:9090/challenge');
 // Connect to the WebSocket server
 wsClient.connect();
-
+wsClient.sendMessage(""rolling challange"");
 ////END OF WEBSOCKET
 
 
@@ -276,6 +276,8 @@ const targetsContainer = document.getElementById(""targets-container"");
 
 // Function to create targets
 function createTargets() {
+
+ 
   for (let i = 0; i < selectedChallenges.length; i++) {
     const target = document.createElement(""div"");
     target.classList.add(""target"");
@@ -291,7 +293,7 @@ function shootRandomTarget() {
   const randomTarget = targets[randomTargetIndex];
 
   //clearing TEXT SOURCES before applying new challange
-
+  
 
   // Add the target-highlight class to simulate the ""selection"" process
   let selectionInProgress = true;
@@ -342,6 +344,7 @@ function shootRandomTarget() {
 
 // Initialize the game by creating targets and automatically shooting a random target
 createTargets();
+
 //updateTextSource(OBS_TEXT_SOURCE, activeChallenge);
 // Add a delay before starting the target selection process
 setTimeout(() => {

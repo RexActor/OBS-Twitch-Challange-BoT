@@ -130,5 +130,29 @@ namespace OBS_Twitch_Challange_BoT.Properties {
                 this["ObsSourceDesc"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ObsSourceOverlay {
+            get {
+                return ((string)(this["ObsSourceOverlay"]));
+            }
+            set {
+                this["ObsSourceOverlay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ObsOverlayScene {
+            get {
+                return ((string)(this["ObsOverlayScene"]));
+            }
+            set {
+                this["ObsOverlayScene"] = value;
+            }
+        }
     }
 }

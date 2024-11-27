@@ -38,14 +38,21 @@
 
 
 
-        <GroupBox Header="Obs Sources" Margin="400,10,0,300">
+        <GroupBox Header="Obs Sources" Margin="400,10,0,286">
             <Grid>
-                <ComboBox x:Name="SceneComboBox"   HorizontalAlignment="Left" Margin="84,18,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="SceneComboBox_SelectionChanged"/>
-                <ComboBox x:Name="TitleSourceComboBox"   IsEnabled="False" HorizontalAlignment="Left" Margin="84,58,0,0" VerticalAlignment="Top" Width="120"  SelectionChanged="SourceComboBox_SelectionChanged"/>
-                <Label Content="Scene" HorizontalAlignment="Left" Margin="6,16,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="73"/>
-                <Label Content="Title Source" HorizontalAlignment="Left" Margin="6,58,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="73"/>
-                <Label Content="Desc. Source" HorizontalAlignment="Left" Margin="6,96,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="78"/>
-                <ComboBox x:Name="DescSourceComboBox"   IsEnabled="False" HorizontalAlignment="Left" Margin="84,98,0,0" VerticalAlignment="Top" Width="120"  SelectionChanged="SourceComboBox_SelectionChanged"/>
+                <Label Content="Scene" HorizontalAlignment="Left" Margin="6,16,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="100"/>
+                <Label Content="Title Source" HorizontalAlignment="Left" Margin="6,58,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="100"/>
+                <Label Content="Desc. Source" HorizontalAlignment="Left" Margin="6,96,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="105"/>
+                <Label Content="Overlay Scene" HorizontalAlignment="Left" Margin="6,127,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="105"/>
+                <Label Content="Overlay Source" HorizontalAlignment="Left" Margin="6,157,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="105"/>
+                <Label Content="* Must be scene" FontSize="10" Foreground="red" HorizontalAlignment="Left" Margin="236,127,0,0" VerticalAlignment="Top" Width="108"/>
+
+                <ComboBox x:Name="SceneComboBox"   HorizontalAlignment="Left" Margin="111,18,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="SceneComboBox_SelectionChanged"/>
+                <ComboBox x:Name="TitleSourceComboBox"   IsEnabled="False" HorizontalAlignment="Left" Margin="111,58,0,0" VerticalAlignment="Top" Width="120" />
+                <ComboBox x:Name="DescSourceComboBox"   IsEnabled="False" HorizontalAlignment="Left" Margin="111,96,0,0" VerticalAlignment="Top" Width="120"  />
+                <ComboBox x:Name="OverlaySourceSceneComboBox"   HorizontalAlignment="Left" Margin="111,129,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="OverlaySourceSceneComboBox_SelectionChanged"/>
+                <ComboBox x:Name="OverlaySourceComboBox"   HorizontalAlignment="Left" Margin="111,159,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="OverlaySourceComboBox_SelectionChanged"/>
+                <Label Content="*source scene is in" FontSize="10" Foreground="red" HorizontalAlignment="Left" Margin="236,160,0,0" VerticalAlignment="Top" Width="108"/>
 
 
 

@@ -27,6 +27,11 @@ namespace OBS_Twitch_Challange_BoT
 		public string ObsSourceTitle { get; set; }
 		public string ObsSourceDesc { get; set; }
 
+		public string ObsSourceOverlay { get; set; }
+
+		public string ObsSceneOverlay {  get; set; }
+
+
 		//Setting variables for OBS
 		public string ObsAddress { get; set; }
 		public int ObsPort { get; set; }
@@ -100,6 +105,8 @@ namespace OBS_Twitch_Challange_BoT
 			ObsScene = Properties.Settings.Default.ObsScene;
 			ObsSourceTitle = Properties.Settings.Default.ObsSourceTitle;
 			ObsSourceDesc = Properties.Settings.Default.ObsSourceDesc;
+			ObsSourceOverlay = Properties.Settings.Default.ObsSourceOverlay;
+			ObsSceneOverlay = Properties.Settings.Default.ObsOverlayScene;
 
 			Dispatcher.Invoke(() =>
 			{
@@ -107,6 +114,8 @@ namespace OBS_Twitch_Challange_BoT
 				TitleSourceComboBox.SelectedItem = ObsSourceTitle;
 				SceneComboBox.SelectedItem = ObsScene;
 				DescSourceComboBox.SelectedItem = ObsSourceDesc;
+				OverlaySourceComboBox.SelectedItem = ObsSourceOverlay;
+				OverlaySourceSceneComboBox.SelectedItem = ObsSceneOverlay;
 
 
 				TwitchUserNameTextBox.Text = TwitchUserName;
@@ -138,16 +147,18 @@ namespace OBS_Twitch_Challange_BoT
 
 				// Clear previous items before adding the new ones
 				SceneComboBox.Items.Clear();
+				OverlaySourceSceneComboBox.Items.Clear();
 
 				// Add scenes retrieved from OBS
 				var scenes = _obsService.GetSceneNames();
 				foreach (var scene in scenes)
 				{
 					SceneComboBox.Items.Add(scene);
+					OverlaySourceSceneComboBox.Items.Add(scene);
 				}
 
 				if (ObsScene != string.Empty) { SceneComboBox.SelectedItem = ObsScene; }
-
+				if (ObsSceneOverlay != string.Empty) { OverlaySourceSceneComboBox.SelectedItem = ObsSceneOverlay; }
 
 			});
 		}
@@ -186,6 +197,40 @@ namespace OBS_Twitch_Challange_BoT
 			if (ObsSourceTitle != string.Empty) { TitleSourceComboBox.SelectedItem = ObsSourceTitle; }
 		}
 
+
+		private void GetSceneItemsForOverlay(string sceneName)
+		{
+			if (OverlaySourceComboBox is null)
+			{
+				return;
+			}
+
+			
+			OverlaySourceComboBox.IsEnabled = true;
+
+			if (OverlaySourceComboBox.Items.Count > 0)
+			{
+				OverlaySourceComboBox.Items.Clear();
+
+			}
+
+			
+
+			var SourceNames = _obsService.GetSourceNames(sceneName);
+			foreach (var SourceName in SourceNames)
+			{
+
+
+				OverlaySourceComboBox.Items.Add($"{SourceName.SourceName}");
+
+			
+			}
+			if (ObsSourceOverlay != string.Empty) { OverlaySourceComboBox.SelectedItem = ObsSourceOverlay; }
+		}
+
+
+
+
 		private void SaveTwitchSettingsBtn_Click(object sender, RoutedEventArgs e)
 		{
 			Properties.Settings.Default.TwitchUsername = TwitchUserNameTextBox.Text;
@@ -200,24 +245,31 @@ namespace OBS_Twitch_Challange_BoT
 			string selectedScene = SceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
 			Properties.Settings.Default.ObsScene = selectedScene;
 
-			// Ensure the SceneComboBox has a valid selection
+			// Ensure the TitleSourceComboBox has a valid selection
 			string selectedSourceTitle = TitleSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
 			Properties.Settings.Default.ObsSourceTitle = selectedSourceTitle;
 
-			// Ensure the SceneComboBox has a valid selection
+			// Ensure the DescSourceComboBox has a valid selection
 			string selectedSourceDesc = DescSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
 			Properties.Settings.Default.ObsSourceDesc = selectedSourceDesc;
+
+
+			// Ensure the OverlaySourceComboBox has a valid selection
+			string selectedOverlaySource = OverlaySourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
+			Properties.Settings.Default.ObsSourceOverlay = selectedOverlaySource;
+
+			// Ensure the OverlaySourceComboBox has a valid selection
+			string selectedOverlayScene = OverlaySourceSceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
+			Properties.Settings.Default.ObsOverlayScene = selectedOverlayScene;
+
+
 #if (DEBUG)
-			Debug.WriteLine($"Saving Settings {selectedScene} Scene  with Title: {selectedSourceTitle} Desc: {selectedSourceDesc} sources");
+			Debug.WriteLine($"Saving Settings {selectedScene} Scene  with Title: {selectedSourceTitle} Desc: {selectedSourceDesc} sources. OverlayScene {selectedOverlaySource} {selectedOverlayScene}  ");
 #endif   
 
 			Properties.Settings.Default.Save();
 		}
 
-		private void SourceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-
-		}
 
 		private void SceneComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -237,6 +289,29 @@ namespace OBS_Twitch_Challange_BoT
 				//SourceComboBox.IsEnabled = false;
 			}
 
+		}
+
+		private void OverlaySourceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (ObsSourceOverlay != string.Empty) { OverlaySourceComboBox.SelectedItem = ObsSourceOverlay; }
+		}
+
+		private void OverlaySourceSceneComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// Ensure there is a valid selected item
+			if (OverlaySourceSceneComboBox.SelectedItem != null)
+			{
+				string selectedScene = OverlaySourceSceneComboBox.SelectedItem.ToString();
+				GetSceneItemsForOverlay(selectedScene);  // Example function call
+
+				// Enable the SourceComboBox only if a valid scene is selected
+				OverlaySourceComboBox.IsEnabled = true;
+			}
+			else
+			{
+				// If no item is selected, disable SourceComboBox
+				//SourceComboBox.IsEnabled = false;
+			}
 		}
 	}
 }

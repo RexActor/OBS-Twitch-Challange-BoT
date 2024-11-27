@@ -22,21 +22,38 @@ namespace OBS_Twitch_Challange_BoT.Services
 			_obsService = obsService;
 		}
 
-		protected override void OnMessage(MessageEventArgs e)
+		protected override async void OnMessage(MessageEventArgs e)
 		{
 			// Handle incoming message from client
 			Debug.WriteLine($"Received from client: {e.Data}");
 
+			if(e.Data.Equals("rolling challange"))
+			{
+				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
+				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
+
+			}
 
 			var challange = JsonConvert.DeserializeObject<Challange>(e.Data);
 
 
 			_obsService.UpdateTextSource(Properties.Settings.Default.ObsSourceTitle, challange.Title);
 			_obsService.UpdateTextSource(Properties.Settings.Default.ObsSourceDesc, challange.Desc);
-
-
 			// Respond to client with the message (optional)
 			Send($"Server received: {e.Data}");
+
+
+
+			await Task.Delay(5000);
+
+			_obsService.ActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
+			_obsService.ActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
+
+
+			_obsService.DeActivateSource(Properties.Settings.Default.ObsOverlayScene, Properties.Settings.Default.ObsSourceOverlay);
+
+
+			
 		}
 	}
 	class WebSocketServerService
@@ -49,7 +66,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 			_server = new WebSocketServer("ws://localhost:9090");
 
 			// Add the custom behavior for handling incoming WebSocket connections
-			_server.AddWebSocketService<ChallengeWebSocketBehavior>("/challenge", () => new ChallengeWebSocketBehavior(obsService));
+			_server.AddWebSocketService("/challenge", () => new ChallengeWebSocketBehavior(obsService));
 
 		}
 
