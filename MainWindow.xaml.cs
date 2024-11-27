@@ -1,6 +1,9 @@
 ﻿using OBS_Twitch_Challange_BoT.Services;
 
 using System.Diagnostics;
+using System.Net;
+using WebSocketSharp;
+using WebSocketSharp.Server;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,14 +15,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace OBS_Twitch_Challange_BoT
 {
+
+
+	
+
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+
+		private WebSocketServerService _webSocketServer;
 		private readonly ObsService _obsService;
 		private readonly HtmlService _htmlService;
 		private readonly TwitchService _twitchService;
@@ -35,6 +43,9 @@ namespace OBS_Twitch_Challange_BoT
 		{
 
 			InitializeComponent();
+			
+
+			
 			_htmlService = htmlService;
 			_obsService = obsService;
 			_twitchService = twitchService;
@@ -47,6 +58,18 @@ namespace OBS_Twitch_Challange_BoT
 			InitializeCommandsTab();
 			InitializeSettingsTab();
 
+		}
+
+		private void StartWebSocketServer()
+		{
+		_webSocketServer = new WebSocketServerService(_obsService);
+			_webSocketServer.Start();
+		}
+
+		// Ensure to stop the WebSocket server when the application is closed
+		private void Window_Closed(object sender, EventArgs e)
+		{
+			_webSocketServer.Stop();
 		}
 
 		private void _twitchService_TwitchConnectionChanged(bool obj)
@@ -86,11 +109,14 @@ namespace OBS_Twitch_Challange_BoT
 
 				if (obj)
 				{
+
+					StartWebSocketServer();
 					ObsConnectBtn.Click -= ObsConnectBtn_Click;
 					ObsConnectBtn.Click += ObsConnectBtn_Disconnect;
 				}
 				else
 				{
+					_webSocketServer.Stop();
 					ObsConnectBtn.Click += ObsConnectBtn_Click;
 					ObsConnectBtn.Click -= ObsConnectBtn_Disconnect;
 				}
@@ -148,8 +174,8 @@ namespace OBS_Twitch_Challange_BoT
 				if (SettingsContentControl.Content is OptionsPage optionsPage)
 				{
 
-					
-					
+
+
 					//optionsPage.ReloadSettings();          // Reload settings
 
 

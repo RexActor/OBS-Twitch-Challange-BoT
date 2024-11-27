@@ -110,12 +110,24 @@ namespace OBS_Twitch_Challange_BoT.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ObsSource {
+        public string ObsSourceTitle {
             get {
-                return ((string)(this["ObsSource"]));
+                return ((string)(this["ObsSourceTitle"]));
             }
             set {
-                this["ObsSource"] = value;
+                this["ObsSourceTitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ObsSourceDesc {
+            get {
+                return ((string)(this["ObsSourceDesc"]));
+            }
+            set {
+                this["ObsSourceDesc"] = value;
             }
         }
     }

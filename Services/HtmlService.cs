@@ -182,168 +182,82 @@ const challenges = [
   },
 ];
 
+
+
+
+
 ////// DO NOT CHANGE ANYTHING BELOW
-class OBSWebSocket {
-  constructor(config) {
-    this.address = config.address || ""127.0.0.1"";
-    this.port = config.port || 4455;
-    this.password = config.password || """";
-    this.socket = null;
-    this.isConnected = false;
-  }
+///
 
-  // Connect to OBS WebSocket server
-  connect() {
-    this.socket = new WebSocket(`ws://${this.address}:${this.port}`);
 
-    this.socket.onopen = (event) => {
-      console.log(""Connected to OBS WebSocket server"");
-      this.isConnected = true;
-    };
-
-    this.socket.onclose = (event) => {
-      console.log(""Disconnected from OBS WebSocket server"");
-      console.log(""Reason:"", event.reason);
-      console.log(""Code:"", event.code);
-      this.isConnected = false;
-    };
-
-    this.socket.onerror = (error) => {
-      console.error(""WebSocket error:"", error);
-    };
-
-    this.socket.onmessage = async (event) => {
-      console.log(""Received message:"", event.data);
-
-      const response = JSON.parse(event.data);
-
-      // If authentication is required, send a response
-      if (response.d.authentication && response.op === 0) {
-        const salt = response.d.authentication.salt;
-        const challenge = response.d.authentication.challenge;
-        const authResponseHash = await this.authenticate(salt, challenge);
-
-        const payload = {
-          op: 1,
-          d: {
-            rpcVersion: 1,
-            authentication: authResponseHash,
-          },
-        };
-
-        this.socket.send(JSON.stringify(payload));
-      }
-    };
-  }
-
-  // Generate SHA-256 hash of the given input
-  async sha256Hash(inputText) {
-    const utf8 = new TextEncoder().encode(inputText);
-    const hashBuffer = await crypto.subtle.digest(""SHA-256"", utf8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const base64Hash = btoa(String.fromCharCode(...hashArray));
-    return base64Hash;
-  }
-
-  // Perform the authentication
-  async authenticate(salt, challenge) {
-    try {
-      const secret = await this.sha256Hash(this.password + salt);
-      const authResponseHash = await this.sha256Hash(secret + challenge);
-      return authResponseHash;
-    } catch (error) {
-      console.error(""Authentication failed:"", error);
-    }
-  }
-
-  // Send a message to OBS
-  sendMessage(opcode, data) {
-    if (this.isConnected && this.socket) {
-      const message = {
-        op: opcode,
-        d: data,
-      };
-      this.socket.send(JSON.stringify(message));
-    } else {
-      console.error(""Not connected to OBS WebSocket."");
-    }
-  }
-
-  // Change the text of a Text GDI source
-  async GetSettings(sourceName) {
-    if (!this.isConnected || !this.socket) {
-      console.error(""Not connected to OBS WebSocket."");
-      return;
+//// WEBSOCKET TO CONNECT TO WPF APPLICATION
+///
+class WebSocketClient {
+    constructor(url) {
+        this.url = url;
+        this.socket = null;
     }
 
-    // Generate a unique requestId
-    const requestId = Date.now().toString();
+    // Method to establish WebSocket connection
+    connect() {
+        this.socket = new WebSocket(this.url); // Create a new WebSocket connection
 
-    // Construct the message to set the text
-    const message = {
-      op: 6, // SetText operation code
-      d: {
-        requestType: ""GetInputSettings"", // The correct requestType
-        requestId: requestId,
-        requestData: {
-          inputName: sourceName,
-        },
-      },
-    };
-
-    // Send the message to OBS WebSocket
-    this.socket.send(JSON.stringify(message));
-    //console.log(`Sent SetText to source ${sourceName}""`);
-  }
-
-  // Change the text of a Text GDI source
-  async changeText(sourceName, newText) {
-    if (!this.isConnected || !this.socket) {
-      console.error(""Not connected to OBS WebSocket."");
-      return;
+        // Define event handlers
+        this.socket.onopen = this.onOpen.bind(this);
+        this.socket.onmessage = this.onMessage.bind(this);
+        this.socket.onerror = this.onError.bind(this);
+        this.socket.onclose = this.onClose.bind(this);
     }
 
-    // Generate a unique requestId
-    const requestId = Date.now().toString();
-
-    // Construct the message to set the text
-    const message = {
-      op: 6, // SetText operation code
-      d: {
-        requestType: ""SetInputSettings"", // The correct requestType
-        requestId: requestId,
-        requestData: {
-          inputName: sourceName,
-          inputSettings: {
-            text: newText, // New text to update
-          },
-        },
-      },
-    };
-
-    // Send the message to OBS WebSocket
-    this.socket.send(JSON.stringify(message));
-    console.log(
-      `Sent SetText to source ${sourceName} with new text: ""${newText}""`
-    );
-  }
-  // Disconnect from the WebSocket
-  disconnect() {
-    if (this.socket) {
-      this.socket.close();
+    // Called when the WebSocket connection is open
+    onOpen() {
+        
+        console.log(""Conenction with WPF is open:"");
     }
-  }
+
+    // Called when a message is received from the WebSocket server
+    onMessage(event) {
+        console.log(""Received from WPF:"", event.data);
+    }
+
+    // Called when an error occurs with the WebSocket connection
+    onError(error) {
+        console.error(""WebSocket error:"", error);
+    }
+
+    // Called when the WebSocket connection is closed
+    onClose() {
+        console.log(""WebSocket connection closed"");
+    }
+
+    // Method to send a message through the WebSocket connection
+    sendMessage(message) {
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(message);
+        } else {
+            console.error(""WebSocket is not open. Cannot send message."");
+        }
+    }
+
+    // Method to close the WebSocket connection
+    close() {
+        if (this.socket) {
+            this.socket.close();
+        }
+    }
 }
 
-// Example usage:
-const obsConfig = {
-  address: OBS_ADDRESS,
-  port: OBS_PORT,
-  password: OBS_PASSWORD,
-};
 
-const obsWebSocket = new OBSWebSocket(obsConfig);
-obsWebSocket.connect();
+const wsClient = new WebSocketClient('ws://localhost:9090/challenge');
+// Connect to the WebSocket server
+wsClient.connect();
+
+////END OF WEBSOCKET
+
+
+
+
+
 
 //select challenge count from available challenges
 
@@ -377,8 +291,7 @@ function shootRandomTarget() {
   const randomTarget = targets[randomTargetIndex];
 
   //clearing TEXT SOURCES before applying new challange
-  obsWebSocket.changeText(TITLE_TEXT_SOURCE, ""Rolling new challenge....."");
-  obsWebSocket.changeText(DESCRIPTION_TEXT_SOURCE, """");
+
 
   // Add the target-highlight class to simulate the ""selection"" process
   let selectionInProgress = true;
@@ -418,8 +331,7 @@ function shootRandomTarget() {
         selectedChallengeElement.textContent = `${randomChallenge.title} challenge!`;
         selectedChallengeDescElement.textContent = `${randomChallenge.desc}`;
         activeChallenge = `${randomChallenge.title} - ${randomChallenge.desc}`;
-        obsWebSocket.changeText(TITLE_TEXT_SOURCE, randomChallenge.title);
-        obsWebSocket.changeText(DESCRIPTION_TEXT_SOURCE, randomChallenge.desc);
+               wsClient.sendMessage(JSON.stringify(randomChallenge));
         clearInterval(textDisplayInterval);
       }, 500);
 

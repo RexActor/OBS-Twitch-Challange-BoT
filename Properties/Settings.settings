@@ -23,7 +23,10 @@
     <Setting Name="ObsScene" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ObsSource" Type="System.String" Scope="User">
+    <Setting Name="ObsSourceTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ObsSourceDesc" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
