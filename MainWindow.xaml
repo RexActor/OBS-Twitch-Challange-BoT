@@ -39,11 +39,11 @@
 
         <!-- OBS Status Label -->
         <Label Content="OBS Status:" Grid.Column="0" Margin="10,10,10,0" VerticalAlignment="Top"/>
-        <Label x:Name="ObsConnectionLbl" Content="" Grid.Column="1" Margin="10,0,666,0" VerticalAlignment="Center"/>
+        <Label x:Name="ObsConnectionLbl" Content="" Grid.Column="1" Margin="0,0,620,0" VerticalAlignment="Center"/>
 
         <!-- Twitch Status Label -->
         <Label Content="Twitch Status:" Grid.Row="1" Grid.Column="0" Margin="10,2,10,0" VerticalAlignment="Top"/>
-        <Label x:Name="TwitchConnectionLbl" Content="" Grid.Row="1" Grid.Column="1" Margin="10,4,601,0" VerticalAlignment="Top"/>
+        <Label x:Name="TwitchConnectionLbl" Content="" Grid.Row="1" Grid.Column="1" Margin="0,4,611,0" VerticalAlignment="Top"/>
 
         <!-- Settings Button -->
         <Button Content="Settings" Grid.Row="0" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Click="Button_Click"/>

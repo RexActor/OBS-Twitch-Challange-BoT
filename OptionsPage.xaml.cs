@@ -1,5 +1,8 @@
-﻿using System;
+﻿using OBS_Twitch_Challange_BoT.Services;
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,24 +23,30 @@ namespace OBS_Twitch_Challange_BoT
     /// </summary>
     public partial class OptionsPage : UserControl
     {
-        public string TwitchUserName { get;set; }
+
+        private readonly ObsService _obsService;
+
+        public string TwitchUserName { get; set; }
         public string TwitchAuth { get; set; }
         public string TwitchChannel { get; set; }
 
 
         public string ObsAddress { get; set; }
-        public int ObsPort {  get; set; }
-        public string ObsPassword {  get; set; }
+        public int ObsPort { get; set; }
+        public string ObsPassword { get; set; }
 
 
-        public OptionsPage()
+        public OptionsPage(ObsService obsService)
         {
+
+            _obsService = obsService;
+
             InitializeComponent();
 
             //Reading Settings
             TwitchUserName = Properties.Settings.Default.TwitchUsername;
-            TwitchAuth=Properties.Settings.Default.TwitchAuth;
-            TwitchChannel=Properties.Settings.Default.TwitchChannel;
+            TwitchAuth = Properties.Settings.Default.TwitchAuth;
+            TwitchChannel = Properties.Settings.Default.TwitchChannel;
 
             ObsAddress = Properties.Settings.Default.ObsIP;
             ObsPort = Properties.Settings.Default.ObsPort;
@@ -52,9 +61,27 @@ namespace OBS_Twitch_Challange_BoT
             ObsAddressTextBox.Text = ObsAddress;
             ObsPortTextBox.Text = ObsPort.ToString();
             ObsPasswordTextBox.Password = ObsPassword;
-           
+
+            GetScenes();
 
 
+        }
+
+        private void GetScenes()
+        {
+            _obsService.GetSceneNames().ForEach(sceneName => {
+                SceneComboBox.Items.Add(sceneName);
+
+            });
+        }
+
+        private void GetSceneItems( string sceneName)
+        {
+            var SourceNames = _obsService.GetSourceNames(sceneName);
+            foreach (var SourceName in SourceNames)
+            {
+               SourceComboBox.Items.Add(SourceName);
+            }
         }
 
         private void SaveTwitchSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -64,11 +91,17 @@ namespace OBS_Twitch_Challange_BoT
             Properties.Settings.Default.TwitchChannel = TwitchChannelTextBox.Text;
 
             Properties.Settings.Default.ObsIP = ObsAddressTextBox.Text;
-            Properties.Settings.Default.ObsPort=Convert.ToInt32(ObsPortTextBox.Text);
+            Properties.Settings.Default.ObsPort = Convert.ToInt32(ObsPortTextBox.Text);
             Properties.Settings.Default.ObsPassword = ObsPasswordTextBox.Password;
 
 
             Properties.Settings.Default.Save();
+        }
+
+        private void SourceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+           Debug.WriteLine(SourceComboBox.SelectedItem.ToString());
+            GetSceneItems(SourceComboBox.SelectedItem.ToString());
         }
     }
 }

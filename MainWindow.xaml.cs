@@ -129,7 +129,7 @@ namespace OBS_Twitch_Challange_BoT
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			MainContentControl.Content = new OptionsPage();
+			MainContentControl.Content = new OptionsPage(_obsService);
 		}
 
 

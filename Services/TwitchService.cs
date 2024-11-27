@@ -214,6 +214,12 @@ namespace OBS_Twitch_Challange_BoT.Services
                 case "!shoutout":
                     HandleShoutOut(client, chatMessage, arguments);
                     break;
+
+                case "!activate":
+
+                    _obsService.ActivateSource("Scene" ,"Challange");
+                    
+                    break;
                 case "!leave":
                     HandleLeaveCommand(client, chatMessage);
                     break;

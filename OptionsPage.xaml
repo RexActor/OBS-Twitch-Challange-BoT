@@ -24,6 +24,11 @@
         <PasswordBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="127,197,0,0"  Password="TextBox" VerticalAlignment="Top" Width="183"/>
 
         <Button x:Name="SaveTwitchSettingsBtn" Content="Save" HorizontalAlignment="Left" Margin="155,235,0,0" VerticalAlignment="Top" Click="SaveTwitchSettingsBtn_Click" Width="105"/>
+        <ComboBox x:Name="SourceComboBox" HorizontalAlignment="Left" Margin="520,77,0,0" VerticalAlignment="Top" Width="120" SelectedItem="Please Select" SelectionChanged="SourceComboBox_SelectionChanged"/>
+        <ComboBox x:Name="SceneComboBox" HorizontalAlignment="Left" Margin="520,37,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Scene" HorizontalAlignment="Left" Margin="442,41,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="73"/>
+        <Label Content="Source" HorizontalAlignment="Left" Margin="442,73,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="73"/>
+
 
     </Grid>
 </UserControl>
