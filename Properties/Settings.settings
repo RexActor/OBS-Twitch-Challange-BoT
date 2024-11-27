@@ -20,5 +20,11 @@
     <Setting Name="ObsPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)">Password</Value>
     </Setting>
+    <Setting Name="ObsScene" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ObsSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
