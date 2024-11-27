@@ -1,20 +1,8 @@
 ﻿using OBS_Twitch_Challange_BoT.Services;
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace OBS_Twitch_Challange_BoT
 {
@@ -63,25 +51,54 @@ namespace OBS_Twitch_Challange_BoT
             ObsPasswordTextBox.Password = ObsPassword;
 
             GetScenes();
-
+          
+            
 
         }
 
         private void GetScenes()
         {
-            _obsService.GetSceneNames().ForEach(sceneName => {
+
+            if (!_obsService.ObsIsConnected)
+            {
+                SceneComboBox.Items.Add("-- Connect OBS --");
+                return;
+            }
+
+
+            if (SceneComboBox.Items.Count > 0)
+            {
+                SceneComboBox.Items.Clear();
+            }
+
+
+            _obsService.GetSceneNames().ForEach(sceneName =>
+            {
                 SceneComboBox.Items.Add(sceneName);
 
             });
         }
 
-        private void GetSceneItems( string sceneName)
+        private void GetSceneItems(string sceneName)
         {
+            if(SourceComboBox is null)
+            {
+                return;
+            }
+
+            SourceComboBox.IsEnabled = true;  // Enable the SourceComboBox
+
+            if (SourceComboBox.Items.Count > 0) {
+                SourceComboBox.Items.Clear();
+               
+            }
+           
             var SourceNames = _obsService.GetSourceNames(sceneName);
             foreach (var SourceName in SourceNames)
             {
-               SourceComboBox.Items.Add(SourceName);
+                SourceComboBox.Items.Add($"{SourceName.SourceName}");
             }
+
         }
 
         private void SaveTwitchSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -100,8 +117,25 @@ namespace OBS_Twitch_Challange_BoT
 
         private void SourceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           Debug.WriteLine(SourceComboBox.SelectedItem.ToString());
-            GetSceneItems(SourceComboBox.SelectedItem.ToString());
+           
+        }
+
+        private void SceneComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Ensure the "Please Select" item is ignored in the event
+            if (SceneComboBox.SelectedItem != null && SceneComboBox.SelectedItem.ToString() != "Please Select")
+            {
+                // Perform logic for valid selection (e.g., update another UI element)
+                string selectedScene = SceneComboBox.SelectedItem.ToString();
+                GetSceneItems(selectedScene);  // Example function call
+                
+            }
+            else
+            {
+                // Handle case where "Please Select" is still selected (do nothing or disable options)
+                SourceComboBox.IsEnabled = false;
+            }
+
         }
     }
 }
