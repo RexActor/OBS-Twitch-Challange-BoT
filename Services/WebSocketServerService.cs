@@ -9,6 +9,8 @@ using WebSocketSharp;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using OBS_Twitch_Challange_BoT.Models;
+using System.Text.Json;
+using System.Windows.Media.Animation;
 
 namespace OBS_Twitch_Challange_BoT.Services
 {
@@ -22,16 +24,38 @@ namespace OBS_Twitch_Challange_BoT.Services
 			_obsService = obsService;
 		}
 
+		private static bool isValidJson(string message)
+		{
+			try
+			{
+				JsonDocument.Parse(message);
+				return true;
+			}
+			catch (System.Text.Json.JsonException ex)
+			{
+				return false;
+			}
+			catch (ArgumentNullException)
+			{
+				return false;
+			}
+		}
+
 		protected override async void OnMessage(MessageEventArgs e)
 		{
 			// Handle incoming message from client
 			Debug.WriteLine($"Received from client: {e.Data}");
 
-			if(e.Data.Equals("rolling challange"))
+			if (e.Data.Equals("rolling challange"))
 			{
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
 
+			}
+
+			if (!isValidJson(e.Data))
+			{
+				return; //if received message is not JSON format. we don't continue
 			}
 
 			var challange = JsonConvert.DeserializeObject<Challange>(e.Data);
@@ -53,14 +77,14 @@ namespace OBS_Twitch_Challange_BoT.Services
 			_obsService.DeActivateSource(Properties.Settings.Default.ObsOverlayScene, Properties.Settings.Default.ObsSourceOverlay);
 
 
-			
+
 		}
 	}
 	class WebSocketServerService
 	{
 		private WebSocketServer _server;
 
-		public WebSocketServerService( ObsService obsService)
+		public WebSocketServerService(ObsService obsService)
 		{
 			// Initialize WebSocket server on port 8080
 			_server = new WebSocketServer("ws://localhost:9090");

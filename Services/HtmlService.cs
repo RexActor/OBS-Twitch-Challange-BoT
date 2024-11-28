@@ -251,7 +251,7 @@ class WebSocketClient {
 const wsClient = new WebSocketClient('ws://localhost:9090/challenge');
 // Connect to the WebSocket server
 wsClient.connect();
-wsClient.sendMessage(""rolling challange"");
+
 ////END OF WEBSOCKET
 
 
@@ -288,6 +288,7 @@ function createTargets() {
 
 // Function to simulate randomly shooting a target
 function shootRandomTarget() {
+wsClient.sendMessage(`rolling challange`);
   const targets = document.querySelectorAll("".target"");
   const randomTargetIndex = Math.floor(Math.random() * targets.length);
   const randomTarget = targets[randomTargetIndex];
