@@ -5,6 +5,7 @@ using OBS_Twitch_Challange_BoT.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Media;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -35,13 +36,16 @@ namespace OBS_Twitch_Challange_BoT.Services
 		public bool _twitchIsConnected;
 		TwitchClient twitchClient;
 		private readonly ObsService _obsService;
+		private readonly LogService _logService;
 
-		public TwitchService(ObsService obsService)
+		public TwitchService(ObsService obsService, LogService logService)
 		{
 			_obsService = obsService;
+			_logService = logService;
 
 			LoadCommands();
 			InitializeFileWatcher();
+
 		}
 
 		private void InitializeFileWatcher()
@@ -63,7 +67,10 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 				var commandsJson = File.ReadAllText(_commandsFilePath);
 				_commands = JsonConvert.DeserializeObject<List<BotCommand>>(commandsJson) ?? new List<BotCommand>();
+				_logService.Log($"[Twitch-Service][Action] Bot Commands reloaded. Total {_commands.Count} commands found",Brushes.LightBlue);
+#if DEBUG
 				Debug.WriteLine($"Bot Commands reloaded. Total {_commands.Count} commands found");
+#endif
 			}
 
 		}
@@ -87,7 +94,11 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		protected virtual void OnTwitchConnectionChanged(bool connected)
 		{
+			string isConnected = twitchClient.IsConnected ? "Yes" : "No";
+			_logService.Log($"[Twitch-Service][CONNECTION] Am I connected to Twitch? {isConnected}",Brushes.LightBlue);
+#if DEBUG
 			Debug.WriteLine($"I'm connected? {twitchClient.IsConnected}");
+#endif
 			TwitchConnectionChanged?.Invoke(connected);
 		}
 
@@ -95,7 +106,10 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 			if (twitchClient is not null)
 			{
+				_logService.Log($"[Twitch-Service][CONNECTION] There is already bot active. I'm not attempting to connect",Brushes.LightBlue);
+#if DEBUG
 				Debug.WriteLine("There is already bot active. I'm not attempting to connect");
+#endif
 				return;
 			}
 			userName = Properties.Settings.Default.TwitchUsername;
@@ -113,6 +127,8 @@ namespace OBS_Twitch_Challange_BoT.Services
 			twitchClient.OnConnectionError += TwitchClient_OnConnectionError;
 			twitchClient.OnDisconnected += Client_OnDisconnected;
 
+			_logService.Log($"[Twitch-Service][CONNECTION] Connecting to Twitch...", Brushes.LightBlue);
+
 			twitchClient.Connect();
 
 
@@ -124,8 +140,14 @@ namespace OBS_Twitch_Challange_BoT.Services
 			{
 				return;
 			}
-			Debug.WriteLine($"Some rror happened {e.Error.Message}");
+			_logService.Log($"[Twitch-Service][CONNECTION] Some error happened {e.Error.Message}",Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CONNECTION] Trying to reconnect....",Brushes.LightBlue);
+#if DEBUG
+
+			Debug.WriteLine($"Some error happened {e.Error.Message}");
 			Debug.WriteLine($"Trying to reconnect....");
+#endif
+
 			ConnectToTwitch();
 		}
 
@@ -135,8 +157,11 @@ namespace OBS_Twitch_Challange_BoT.Services
 			{
 				twitchClient.SendMessage(channelName, PickLeaveMessage());
 
-				Debug.WriteLine($"I'm disconnecting from {channelName}");
+				_logService.Log($"[Twitch-Service][CONNECTION] I'm disconnecting from {channelName}",Brushes.LightBlue);
 
+#if DEBUG
+				Debug.WriteLine($"I'm disconnecting from {channelName}");
+#endif
 				twitchClient.AutoReListenOnException = false;
 				twitchClient.OnMessageReceived -= Client_OnMessageReceived;
 				twitchClient.OnConnected -= Client_OnConnected;
@@ -156,14 +181,19 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
 		{
+
+			_logService.Log($"[Twitch-Service][CONNECTION] I left {channelName}",Brushes.LightBlue);
+#if DEBUG
 			Debug.WriteLine($"I left {channelName}");
+#endif
+
 			TwitchIsConnected = false;
 		}
 
 		private void Client_OnConnected(object? sender, TwitchLib.Client.Events.OnConnectedArgs e)
 		{
 
-
+			_logService.Log($"[Twitch-Service][CONNECTION] Connection Successfull", Brushes.LightBlue);
 			TwitchIsConnected = twitchClient.IsConnected;
 			HandleJoinMessage(twitchClient, channelName);
 
@@ -171,6 +201,8 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		private void HandleJoinMessage(TwitchClient twitchClient, string channelName)
 		{
+
+			_logService.Log($"[Twitch-Service][CHANNEL] I joined {channelName}", Brushes.LightBlue);
 			twitchClient.SendMessage(channelName, PickJoinMessage());
 		}
 
@@ -184,10 +216,10 @@ namespace OBS_Twitch_Challange_BoT.Services
 			}
 
 
-
-
+			_logService.Log($"[Twitch-Service][CHANNEL] {e.ChatMessage.DisplayName} : {e.ChatMessage.Message}",Brushes.LightBlue);
+#if DEBUG
 			Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} {e.ChatMessage.DisplayName}:{e.ChatMessage.Message}");
-
+#endif
 
 			if (e.ChatMessage.Message.StartsWith("!"))
 			{
@@ -210,6 +242,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 
 			//check if command exists in commands.json file
+			_logService.Log($"[Twitch-Service][CHANNEL] Command {command} received... ",Brushes.LightBlue);
 
 			var mathcedCommand = _commands.FirstOrDefault(c => c.CommandText.Equals(command, StringComparison.InvariantCultureIgnoreCase));
 			if (mathcedCommand != null)
@@ -221,20 +254,6 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 			switch (command)
 			{
-				case "!hello":
-					client.SendMessage(chatMessage.Channel, "Hello, " + chatMessage.DisplayName + "!");
-					break;
-
-				case "!shoutout":
-					HandleShoutOut(client, chatMessage, arguments);
-					break;
-
-				case "!activate":
-
-					_obsService.ActivateSource("Scene", "Challange");
-
-					break;
-
 
 				case "!roll":
 					HandleChallangeCommand(client, chatMessage);
@@ -251,9 +270,12 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 			if (chatMessage.IsModerator || chatMessage.IsBroadcaster)
 			{
+
+				_logService.Log($"[Twitch-Service][ACTION] Handling Challange Command",Brushes.LightBlue);
+
 				//Deactivating Text and Description sources
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
-				
+
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
 
 
@@ -262,22 +284,15 @@ namespace OBS_Twitch_Challange_BoT.Services
 			}
 		}
 
-		private void HandleShoutOut(TwitchClient client, ChatMessage chatMessage, string arguments)
-		{
-			if (string.IsNullOrWhiteSpace(arguments))
-			{
-				client.SendMessage(chatMessage.Channel, $"{chatMessage.Username}, you need to specify someone to shout out! ");
-			}
-			else
-			{
-				client.SendMessage(chatMessage.Channel, $"Shoutout to {arguments}! Check out their channel and show them some love!");
-			}
-		}
-
 		private void HandleLeaveCommand(TwitchClient client, ChatMessage chatMessage)
 		{
+
+
 			if (chatMessage.Message.Equals("!leave", StringComparison.InvariantCultureIgnoreCase))
 			{
+
+				_logService.Log($"[Twitch-Service][ACTION] Handling Leave Command", Brushes.LightBlue);
+
 				if (chatMessage.IsMe)
 				{
 					client.SendMessage(chatMessage.Channel, "I'm not responding on my own requests you dum dum!");

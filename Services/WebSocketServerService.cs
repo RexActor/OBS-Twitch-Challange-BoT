@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Media;
 using WebSocketSharp.Server;
 using WebSocketSharp;
 using System.Diagnostics;
@@ -18,12 +18,13 @@ namespace OBS_Twitch_Challange_BoT.Services
 	{
 		private ObsService _obsService;
 		private TwitchService _twitchService;
-		public ChallengeWebSocketBehavior(ObsService obsService, TwitchService twitchService)
+		private LogService _logService;
+		public ChallengeWebSocketBehavior(ObsService obsService, TwitchService twitchService, LogService logService)
 		{
 			// Inject the ObsService to handle OBS-related actions
 			_obsService = obsService;
 			_twitchService = twitchService;
-			
+			_logService = logService;
 		}
 
 		private static bool isValidJson(string message)
@@ -46,12 +47,19 @@ namespace OBS_Twitch_Challange_BoT.Services
 		protected override async void OnMessage(MessageEventArgs e)
 		{
 			// Handle incoming message from client
-			Debug.WriteLine($"Received from client: {e.Data}");
 
+			_logService.Log($"[WebSocket-Service][Message] Received from client: {e.Data}", Brushes.Orange);
+
+
+#if DEBUG
+			Debug.WriteLine($"Received from client: {e.Data}");
+#endif
 			if (e.Data.Equals("rolling challange"))
 			{
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
+
+				_logService.Log($"[WebSocket-Service][Action] We are rolling for new Challange:", Brushes.Orange);
 				_twitchService.SendMessage("We are rolling for new Challange");
 			}
 
@@ -68,7 +76,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 			// Respond to client with the message (optional)
 			Send($"Server received: {e.Data}");
 
-
+			_logService.Log($"[WebSocket-Service][Action] WChallange Selected Title: {challange.Title} Description: {challange.Desc}", Brushes.Orange);
 			_twitchService.SendMessage($"We will do {challange.Title} challange");
 
 
@@ -87,27 +95,35 @@ namespace OBS_Twitch_Challange_BoT.Services
 	class WebSocketServerService
 	{
 		private WebSocketServer _server;
+		private readonly LogService _logService;
 
-		public WebSocketServerService(ObsService obsService,TwitchService twitchService)
+		public WebSocketServerService(ObsService obsService,TwitchService twitchService, LogService logService)
 		{
-			// Initialize WebSocket server on port 8080
+			// Initialize WebSocket server on port 9090
 			_server = new WebSocketServer("ws://localhost:9090");
 
 			// Add the custom behavior for handling incoming WebSocket connections
-			_server.AddWebSocketService("/challenge", () => new ChallengeWebSocketBehavior(obsService,twitchService));
-
+			_server.AddWebSocketService("/challenge", () => new ChallengeWebSocketBehavior(obsService, twitchService,logService));
+			_logService = logService;
 		}
 
 		public void Start()
 		{
 			_server.Start();
+
+			_logService.Log($"[WebSocket-Service][CONNECTION] WebSocket server started on ws://localhost:9090", Brushes.Orange);
+#if DEBUG
 			Debug.WriteLine("WebSocket server started on ws://localhost:9090");
+#endif
 		}
 
 		public void Stop()
 		{
 			_server.Stop();
+			_logService.Log($"[WebSocket-Service][CONNECTION] WebSocket server stopped.", Brushes.Orange);
+#if DEBUG
 			Debug.WriteLine("WebSocket server stopped.");
+#endif
 		}
 	}
 }

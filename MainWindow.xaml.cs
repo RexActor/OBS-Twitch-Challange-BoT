@@ -31,15 +31,19 @@ namespace OBS_Twitch_Challange_BoT
 		private readonly ObsService _obsService;
 		private readonly HtmlService _htmlService;
 		private readonly TwitchService _twitchService;
+		private readonly LogService _logService;
 
 		// Parameterless constructor for WPF
-		public MainWindow() : this(new ObsService(), new HtmlService(), null)
+		public MainWindow() : this(null, new HtmlService(), null,null)
 		{
-			_twitchService = new TwitchService(_obsService);
+			
+			_logService = new LogService();
+			_twitchService = new TwitchService(_obsService,_logService);
+			_obsService = new ObsService(_logService);
 
 		}
 
-		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService)
+		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService,LogService logService)
 		{
 
 			InitializeComponent();
@@ -49,6 +53,7 @@ namespace OBS_Twitch_Challange_BoT
 			_htmlService = htmlService;
 			_obsService = obsService;
 			_twitchService = twitchService;
+			_logService = logService;
 
 
 			_obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
@@ -57,12 +62,15 @@ namespace OBS_Twitch_Challange_BoT
 
 			InitializeCommandsTab();
 			InitializeSettingsTab();
+			InitializeConsoleTab();
 
 		}
 
+		
+
 		private void StartWebSocketServer()
 		{
-		_webSocketServer = new WebSocketServerService(_obsService,_twitchService);
+		_webSocketServer = new WebSocketServerService(_obsService,_twitchService,_logService);
 			_webSocketServer.Start();
 		}
 
@@ -165,7 +173,10 @@ namespace OBS_Twitch_Challange_BoT
 		{
 			CommandsContentControl.Content = new CommandPage();
 		}
-
+		private void InitializeConsoleTab()
+		{
+			ConsoleTab.Content = new ConsolePage(_logService);
+		}
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 

@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OBS_Twitch_Challange_BoT"
         mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="900"
-        Title="Obs Twitch Challenge App" Height="600" Width="900" ResizeMode="NoResize">
+        Title="Obs Twitch Challenge App" Height="600" Width="900" ResizeMode="CanResize">
 
     <Grid>
         <TabControl x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+            <TabItem Header="Console">
+                <ContentControl x:Name="ConsoleTab"/>
+            </TabItem>
+            
             <!-- OBS Tab -->
             <TabItem Header="OBS">
                 <Grid>
