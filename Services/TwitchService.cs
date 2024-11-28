@@ -149,6 +149,11 @@ namespace OBS_Twitch_Challange_BoT.Services
 			}
 		}
 
+		public void SendMessage(string message)
+		{
+			twitchClient.SendMessage(channelName, message);
+		}
+
 		private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
 		{
 			Debug.WriteLine($"I left {channelName}");
@@ -178,7 +183,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 				return;
 			}
 
-		   
+
 
 
 			Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} {e.ChatMessage.DisplayName}:{e.ChatMessage.Message}");
@@ -194,19 +199,21 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 				var arguments = messageParts.Length > 1 ? messageParts[1] : string.Empty; // remaining text is argument
 
-			   HandleCommand(client,e.ChatMessage,command,arguments);
+				HandleCommand(client, e.ChatMessage, command, arguments);
 			}
 
 
 		}
 
 
-		private void HandleCommand(TwitchClient client, ChatMessage chatMessage, string command, string arguments) {
+		private void HandleCommand(TwitchClient client, ChatMessage chatMessage, string command, string arguments)
+		{
 
 			//check if command exists in commands.json file
 
 			var mathcedCommand = _commands.FirstOrDefault(c => c.CommandText.Equals(command, StringComparison.InvariantCultureIgnoreCase));
-			if (mathcedCommand != null) {
+			if (mathcedCommand != null)
+			{
 
 				client.SendMessage(chatMessage.Channel, mathcedCommand.Response);
 				return;
@@ -224,13 +231,13 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 				case "!activate":
 
-					_obsService.ActivateSource("Scene" ,"Challange");
-					
+					_obsService.ActivateSource("Scene", "Challange");
+
 					break;
 
 
 				case "!roll":
-					HandleChallangeCommand(client,chatMessage);
+					HandleChallangeCommand(client, chatMessage);
 					break;
 				case "!leave":
 					HandleLeaveCommand(client, chatMessage);
@@ -242,21 +249,17 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		private void HandleChallangeCommand(TwitchClient client, ChatMessage chatMessage)
 		{
-
-
-			string message = string.Empty;
-			if (_obsService.haveChallange is not null)
+			if (chatMessage.IsModerator || chatMessage.IsBroadcaster)
 			{
-				message = $"{_obsService.haveChallange.Title}";
+				//Deactivating Text and Description sources
+				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
+				
+				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
 
+
+				//Activating Overlay Source
+				_obsService.ActivateSource(Properties.Settings.Default.ObsOverlayScene, Properties.Settings.Default.ObsSourceOverlay);
 			}
-			else
-			{
-				message = $"something went wrong. there are no challange";
-			}
-			client.SendMessage(chatMessage.Channel, message);
-
-
 		}
 
 		private void HandleShoutOut(TwitchClient client, ChatMessage chatMessage, string arguments)

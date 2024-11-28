@@ -62,7 +62,7 @@ namespace OBS_Twitch_Challange_BoT
 
 		private void StartWebSocketServer()
 		{
-		_webSocketServer = new WebSocketServerService(_obsService);
+		_webSocketServer = new WebSocketServerService(_obsService,_twitchService);
 			_webSocketServer.Start();
 		}
 

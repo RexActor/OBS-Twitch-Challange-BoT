@@ -17,11 +17,13 @@ namespace OBS_Twitch_Challange_BoT.Services
 	public class ChallengeWebSocketBehavior : WebSocketBehavior
 	{
 		private ObsService _obsService;
-
-		public ChallengeWebSocketBehavior(ObsService obsService)
+		private TwitchService _twitchService;
+		public ChallengeWebSocketBehavior(ObsService obsService, TwitchService twitchService)
 		{
 			// Inject the ObsService to handle OBS-related actions
 			_obsService = obsService;
+			_twitchService = twitchService;
+			
 		}
 
 		private static bool isValidJson(string message)
@@ -50,7 +52,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 			{
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
-
+				_twitchService.SendMessage("We are rolling for new Challange");
 			}
 
 			if (!isValidJson(e.Data))
@@ -59,14 +61,15 @@ namespace OBS_Twitch_Challange_BoT.Services
 			}
 
 			var challange = JsonConvert.DeserializeObject<Challange>(e.Data);
-			_obsService.challange = challange;
-			_obsService.haveChallange = true;
+			
 
 			_obsService.UpdateTextSource(Properties.Settings.Default.ObsSourceTitle, challange.Title);
 			_obsService.UpdateTextSource(Properties.Settings.Default.ObsSourceDesc, challange.Desc);
 			// Respond to client with the message (optional)
 			Send($"Server received: {e.Data}");
 
+
+			_twitchService.SendMessage($"We will do {challange.Title} challange");
 
 
 			await Task.Delay(5000);
@@ -85,13 +88,13 @@ namespace OBS_Twitch_Challange_BoT.Services
 	{
 		private WebSocketServer _server;
 
-		public WebSocketServerService(ObsService obsService)
+		public WebSocketServerService(ObsService obsService,TwitchService twitchService)
 		{
 			// Initialize WebSocket server on port 8080
 			_server = new WebSocketServer("ws://localhost:9090");
 
 			// Add the custom behavior for handling incoming WebSocket connections
-			_server.AddWebSocketService("/challenge", () => new ChallengeWebSocketBehavior(obsService));
+			_server.AddWebSocketService("/challenge", () => new ChallengeWebSocketBehavior(obsService,twitchService));
 
 		}
 

@@ -21,10 +21,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 	{
 		OBSWebsocket obsSocket;
 		public bool _obsIsConnected;
-		public bool haveChallange;
-		public Challange challange;
-
-
+	
 
 		public bool ObsIsConnected
 		{
@@ -38,26 +35,12 @@ namespace OBS_Twitch_Challange_BoT.Services
 				}
 			}
 		}
-		public bool ChallangeSet
-		{
-			get => haveChallange;
-			private set
-			{
-				if (haveChallange != value)
-				{
-					haveChallange = value;
-					OnChallangeUpdated(haveChallange);
-				}
-			}
-		}
-
-
+		
 
 
 		// Event for connection status changes
 		public event Action<bool> ObsConnectionChanged;
-
-		public event Action<bool> ChallangeUpdated;
+		
 
 
 		public void ConnectWebSocket(string url, int port, string password)
@@ -103,12 +86,6 @@ namespace OBS_Twitch_Challange_BoT.Services
 		protected virtual void OnObsConnectionChanged(bool isConnected)
 		{
 			ObsConnectionChanged?.Invoke(isConnected);
-		}
-
-
-		protected virtual void OnChallangeUpdated(bool haveChallange)
-		{
-			ChallangeUpdated?.Invoke(haveChallange);
 		}
 
 		public void UpdateTextSource(string sourceName, string text)
