@@ -59,7 +59,8 @@ namespace OBS_Twitch_Challange_BoT.Services
 			}
 
 			var challange = JsonConvert.DeserializeObject<Challange>(e.Data);
-
+			_obsService.challange = challange;
+			_obsService.haveChallange = true;
 
 			_obsService.UpdateTextSource(Properties.Settings.Default.ObsSourceTitle, challange.Title);
 			_obsService.UpdateTextSource(Properties.Settings.Default.ObsSourceDesc, challange.Desc);
