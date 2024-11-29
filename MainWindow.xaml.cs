@@ -19,7 +19,7 @@ namespace OBS_Twitch_Challange_BoT
 {
 
 
-	
+
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -34,22 +34,22 @@ namespace OBS_Twitch_Challange_BoT
 		private readonly LogService _logService;
 
 		// Parameterless constructor for WPF
-		public MainWindow() : this(null, new HtmlService(), null,null)
+		public MainWindow() : this(null, new HtmlService(), null, null)
 		{
-			
+
 			_logService = new LogService();
-			_twitchService = new TwitchService(_obsService,_logService);
+			_twitchService = new TwitchService(_obsService, _logService);
 			_obsService = new ObsService(_logService);
 
 		}
 
-		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService,LogService logService)
+		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService, LogService logService)
 		{
 
 			InitializeComponent();
-			
 
-			
+
+
 			_htmlService = htmlService;
 			_obsService = obsService;
 			_twitchService = twitchService;
@@ -58,7 +58,7 @@ namespace OBS_Twitch_Challange_BoT
 
 			_obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
 			_twitchService.TwitchConnectionChanged += _twitchService_TwitchConnectionChanged;
-			_htmlService.GenerateHTMLFile("Index.html");
+
 
 			InitializeCommandsTab();
 			InitializeSettingsTab();
@@ -66,11 +66,11 @@ namespace OBS_Twitch_Challange_BoT
 
 		}
 
-		
+
 
 		private void StartWebSocketServer()
 		{
-		_webSocketServer = new WebSocketServerService(_obsService,_twitchService,_logService);
+			_webSocketServer = new WebSocketServerService(_obsService, _twitchService, _logService);
 			_webSocketServer.Start();
 		}
 
@@ -165,7 +165,7 @@ namespace OBS_Twitch_Challange_BoT
 
 		private void InitializeSettingsTab()
 		{
-			SettingsContentControl.Content = new OptionsPage(_obsService);
+			SettingsContentControl.Content = new OptionsPage(_obsService, _htmlService, _logService);
 
 		}
 

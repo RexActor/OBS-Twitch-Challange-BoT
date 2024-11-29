@@ -2,6 +2,7 @@
 
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Controls;
 
 namespace OBS_Twitch_Challange_BoT
@@ -13,6 +14,8 @@ namespace OBS_Twitch_Challange_BoT
 	{
 
 		private readonly ObsService _obsService;
+		private readonly HtmlService _htmlService;
+		private readonly LogService _logService;
 
 
 		//Setting variables for Twitch
@@ -45,21 +48,28 @@ namespace OBS_Twitch_Challange_BoT
 		public int WebsocketPort { get; set; }
 
 
-		public OptionsPage(ObsService obsService)
+		public OptionsPage(ObsService obsService, HtmlService htmlService, LogService logService)
 		{
 
 			_obsService = obsService;
 			_obsService.ObsConnectionChanged += OnObsConnectionChanged;
+
+			_htmlService = htmlService;
+			_logService = logService;
 			InitializeComponent();
 
 
 
 
 			ReloadSettings();
+			
 		}
 
 		private void OnObsConnectionChanged(bool isConnected)
 		{
+
+
+			_logService.Log($"[SETTINGS][OBS] OBS CONNECTION CHANGED --- RELOADING SETTINGS FOR OBS...", Brushes.Yellow);
 			Dispatcher.Invoke(() =>
 			{// Update UI or perform actions based on the connection status
 				if (isConnected)
@@ -100,6 +110,13 @@ namespace OBS_Twitch_Challange_BoT
 
 		private void LoadSettings()
 		{//Reading Settings
+
+
+#if DEBUG
+			Debug.WriteLine("Loading settings....");
+#endif
+
+			_logService.Log($"[SETTINGS][LOAD] Loading Saved Settings...", Brushes.Yellow);
 
 			TwitchUserName = Properties.Settings.Default.TwitchUsername;
 			TwitchAuth = Properties.Settings.Default.TwitchAuth;
@@ -142,6 +159,13 @@ namespace OBS_Twitch_Challange_BoT
 				WebsocketAddressTextBox.Text = WebsocketAddress;
 
 			});
+
+
+			_logService.Log($"[SETTINGS][LOAD] Settings loaded", Brushes.Yellow);
+
+#if DEBUG
+			Debug.WriteLine("Settings loaded");
+#endif
 
 		}
 
@@ -253,7 +277,7 @@ namespace OBS_Twitch_Challange_BoT
 			Properties.Settings.Default.TwitchAuth = TwitchAuthTextBox.Password;
 			Properties.Settings.Default.TwitchChannel = TwitchChannelTextBox.Text;
 
-
+			_logService.Log($"[OPTIONS][SAVE] Saving Twitch settings", Brushes.Yellow);
 
 #if (DEBUG)
 			Debug.WriteLine($"Saving Settings for Twitch Auth ");
@@ -313,7 +337,7 @@ namespace OBS_Twitch_Challange_BoT
 			Properties.Settings.Default.ObsPassword = ObsPasswordTextBox.Password;
 
 
-
+			_logService.Log($"[OPTIONS][SAVE] Saving OBS Websocket settings", Brushes.Yellow);
 
 #if (DEBUG)
 			Debug.WriteLine($"Saving Settings for OBS WebSocket  ");
@@ -349,13 +373,13 @@ namespace OBS_Twitch_Challange_BoT
 			Properties.Settings.Default.ObsSourceOverlay = selectedOverlaySource;
 			Properties.Settings.Default.ObsScene = selectedScene;
 			Properties.Settings.Default.ObsOverlayScene = selectedOverlayScene;
-
+			_logService.Log($"[OPTIONS][SAVE] Saving OBS Settings for Scenes and Overlays", Brushes.Yellow);
 
 #if (DEBUG)
 			Debug.WriteLine($"Saving Settings for OBS Scenes  ");
 #endif
-
 			Properties.Settings.Default.Save();
+
 		}
 
 		private void SaveWebsocketSettings_Click(object sender, RoutedEventArgs e)
@@ -365,13 +389,24 @@ namespace OBS_Twitch_Challange_BoT
 
 			Properties.Settings.Default.WebsocketAddress = WebsocketAddressTextBox.Text;
 			Properties.Settings.Default.WebsocketPort = Convert.ToInt32(WebsocketPortTextBox.Text);
-			Properties.Settings.Default.Save();
-
+		
+			_logService.Log($"[OPTIONS][SAVE] Saving WebsocketSettings", Brushes.Yellow);
 
 #if (DEBUG)
 			Debug.WriteLine($"Saving Settings for OBS Scenes  ");
 #endif
+			Properties.Settings.Default.Save();
+		}
 
+		private void GenerateHTMLFileBtn_Click(object sender, RoutedEventArgs e)
+		{
+
+			_logService.Log($"[OPTIONS][SAVE] Generating HTML File", Brushes.Yellow);
+
+#if (DEBUG)
+			Debug.WriteLine($"Generating HTML File");
+#endif
+			_htmlService.GenerateHTMLFile("Index.html");
 		}
 	}
 }

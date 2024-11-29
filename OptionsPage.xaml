@@ -76,8 +76,9 @@
 
 
                 <Button x:Name="SaveWebsocketSettings" Content="Save WebSocket Settings" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Bottom" Click="SaveWebsocketSettings_Click" Width="155" Height="27"/>
-            </Grid>
+                 </Grid>
         </GroupBox>
+        <Button x:Name="GenerateHTMLFileBtn" Content="Generate HTML File" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Click="GenerateHTMLFileBtn_Click" Width="155" Height="27"/>
 
 
     </Grid>

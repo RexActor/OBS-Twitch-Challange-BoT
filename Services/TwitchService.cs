@@ -37,6 +37,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		TwitchClient twitchClient;
 		private readonly ObsService _obsService;
 		private readonly LogService _logService;
+		public event Action<bool> TwitchConnectionChanged;
 
 		public TwitchService(ObsService obsService, LogService logService)
 		{
@@ -88,8 +89,6 @@ namespace OBS_Twitch_Challange_BoT.Services
 				}
 			}
 		}
-
-		public event Action<bool> TwitchConnectionChanged;
 
 
 		protected virtual void OnTwitchConnectionChanged(bool connected)
