@@ -29,7 +29,7 @@ namespace OBS_Twitch_Challange_BoT
 
 		public string ObsSourceOverlay { get; set; }
 
-		public string ObsSceneOverlay {  get; set; }
+		public string ObsSceneOverlay { get; set; }
 
 
 		//Setting variables for OBS
@@ -191,7 +191,7 @@ namespace OBS_Twitch_Challange_BoT
 
 
 				TitleSourceComboBox.Items.Add($"{SourceName.SourceName}");
-				
+
 				DescSourceComboBox.Items.Add($"{SourceName.SourceName}");
 			}
 			if (ObsSourceTitle != string.Empty) { TitleSourceComboBox.SelectedItem = ObsSourceTitle; }
@@ -205,7 +205,7 @@ namespace OBS_Twitch_Challange_BoT
 				return;
 			}
 
-			
+
 			OverlaySourceComboBox.IsEnabled = true;
 
 			if (OverlaySourceComboBox.Items.Count > 0)
@@ -214,7 +214,7 @@ namespace OBS_Twitch_Challange_BoT
 
 			}
 
-			
+
 
 			var SourceNames = _obsService.GetSourceNames(sceneName);
 			foreach (var SourceName in SourceNames)
@@ -223,7 +223,7 @@ namespace OBS_Twitch_Challange_BoT
 
 				OverlaySourceComboBox.Items.Add($"{SourceName.SourceName}");
 
-			
+
 			}
 			if (ObsSourceOverlay != string.Empty) { OverlaySourceComboBox.SelectedItem = ObsSourceOverlay; }
 		}
@@ -237,35 +237,11 @@ namespace OBS_Twitch_Challange_BoT
 			Properties.Settings.Default.TwitchAuth = TwitchAuthTextBox.Password;
 			Properties.Settings.Default.TwitchChannel = TwitchChannelTextBox.Text;
 
-			Properties.Settings.Default.ObsIP = ObsAddressTextBox.Text;
-			Properties.Settings.Default.ObsPort = Convert.ToInt32(ObsPortTextBox.Text);
-			Properties.Settings.Default.ObsPassword = ObsPasswordTextBox.Password;
-
-			// Ensure the SceneComboBox has a valid selection
-			string selectedScene = SceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
-			Properties.Settings.Default.ObsScene = selectedScene;
-
-			// Ensure the TitleSourceComboBox has a valid selection
-			string selectedSourceTitle = TitleSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
-			Properties.Settings.Default.ObsSourceTitle = selectedSourceTitle;
-
-			// Ensure the DescSourceComboBox has a valid selection
-			string selectedSourceDesc = DescSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
-			Properties.Settings.Default.ObsSourceDesc = selectedSourceDesc;
-
-
-			// Ensure the OverlaySourceComboBox has a valid selection
-			string selectedOverlaySource = OverlaySourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
-			Properties.Settings.Default.ObsSourceOverlay = selectedOverlaySource;
-
-			// Ensure the OverlaySourceComboBox has a valid selection
-			string selectedOverlayScene = OverlaySourceSceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
-			Properties.Settings.Default.ObsOverlayScene = selectedOverlayScene;
-
+			
 
 #if (DEBUG)
-			Debug.WriteLine($"Saving Settings {selectedScene} Scene  with Title: {selectedSourceTitle} Desc: {selectedSourceDesc} sources. OverlayScene {selectedOverlaySource} {selectedOverlayScene}  ");
-#endif   
+			Debug.WriteLine($"Saving Settings for Twitch Auth ");
+#endif
 
 			Properties.Settings.Default.Save();
 		}
@@ -312,6 +288,58 @@ namespace OBS_Twitch_Challange_BoT
 				// If no item is selected, disable SourceComboBox
 				//SourceComboBox.IsEnabled = false;
 			}
+		}
+
+		private void SaveObsWebsocket_Click(object sender, RoutedEventArgs e)
+		{
+			Properties.Settings.Default.ObsIP = ObsAddressTextBox.Text;
+			Properties.Settings.Default.ObsPort = Convert.ToInt32(ObsPortTextBox.Text);
+			Properties.Settings.Default.ObsPassword = ObsPasswordTextBox.Password;
+
+
+
+
+#if (DEBUG)
+			Debug.WriteLine($"Saving Settings for OBS WebSocket  ");
+#endif
+
+			Properties.Settings.Default.Save();
+
+		}
+
+		private void SaveOBSSettings_Click(object sender, RoutedEventArgs e)
+		{
+
+			// Ensure the SceneComboBox has a valid selection
+			string selectedScene = SceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
+		
+			// Ensure the TitleSourceComboBox has a valid selection
+			string selectedSourceTitle = TitleSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
+
+			// Ensure the DescSourceComboBox has a valid selection
+			string selectedSourceDesc = DescSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
+
+			// Ensure the OverlaySourceComboBox has a valid selection
+			string selectedOverlaySource = OverlaySourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
+
+			// Ensure the OverlaySourceComboBox has a valid selection
+			string selectedOverlayScene = OverlaySourceSceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
+
+
+
+
+			Properties.Settings.Default.ObsSourceTitle = selectedSourceTitle;
+			Properties.Settings.Default.ObsSourceDesc = selectedSourceDesc;
+			Properties.Settings.Default.ObsSourceOverlay = selectedOverlaySource;
+			Properties.Settings.Default.ObsScene = selectedScene;
+			Properties.Settings.Default.ObsOverlayScene = selectedOverlayScene;
+
+
+#if (DEBUG)
+			Debug.WriteLine($"Saving Settings for OBS Scenes  ");
+#endif
+
+			Properties.Settings.Default.Save();
 		}
 	}
 }

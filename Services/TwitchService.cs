@@ -31,7 +31,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		private string _commandsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "commands.json");
 		private List<BotCommand> _commands = new();
 		private FileSystemWatcher _fileWatcher;
-
+		private int _challangeCommandRequestCount = 0;
 
 		public bool _twitchIsConnected;
 		TwitchClient twitchClient;
@@ -67,7 +67,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 				var commandsJson = File.ReadAllText(_commandsFilePath);
 				_commands = JsonConvert.DeserializeObject<List<BotCommand>>(commandsJson) ?? new List<BotCommand>();
-				_logService.Log($"[Twitch-Service][Action] Bot Commands reloaded. Total {_commands.Count} commands found",Brushes.LightBlue);
+				_logService.Log($"[Twitch-Service][Action] Bot Commands reloaded. Total {_commands.Count} commands found", Brushes.LightBlue);
 #if DEBUG
 				Debug.WriteLine($"Bot Commands reloaded. Total {_commands.Count} commands found");
 #endif
@@ -95,7 +95,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		protected virtual void OnTwitchConnectionChanged(bool connected)
 		{
 			string isConnected = twitchClient.IsConnected ? "Yes" : "No";
-			_logService.Log($"[Twitch-Service][CONNECTION] Am I connected to Twitch? {isConnected}",Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CONNECTION] Am I connected to Twitch? {isConnected}", Brushes.LightBlue);
 #if DEBUG
 			Debug.WriteLine($"I'm connected? {twitchClient.IsConnected}");
 #endif
@@ -106,7 +106,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 			if (twitchClient is not null)
 			{
-				_logService.Log($"[Twitch-Service][CONNECTION] There is already bot active. I'm not attempting to connect",Brushes.LightBlue);
+				_logService.Log($"[Twitch-Service][CONNECTION] There is already bot active. I'm not attempting to connect", Brushes.LightBlue);
 #if DEBUG
 				Debug.WriteLine("There is already bot active. I'm not attempting to connect");
 #endif
@@ -140,8 +140,8 @@ namespace OBS_Twitch_Challange_BoT.Services
 			{
 				return;
 			}
-			_logService.Log($"[Twitch-Service][CONNECTION] Some error happened {e.Error.Message}",Brushes.LightBlue);
-			_logService.Log($"[Twitch-Service][CONNECTION] Trying to reconnect....",Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CONNECTION] Some error happened {e.Error.Message}", Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CONNECTION] Trying to reconnect....", Brushes.LightBlue);
 #if DEBUG
 
 			Debug.WriteLine($"Some error happened {e.Error.Message}");
@@ -157,7 +157,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 			{
 				twitchClient.SendMessage(channelName, PickLeaveMessage());
 
-				_logService.Log($"[Twitch-Service][CONNECTION] I'm disconnecting from {channelName}",Brushes.LightBlue);
+				_logService.Log($"[Twitch-Service][CONNECTION] I'm disconnecting from {channelName}", Brushes.LightBlue);
 
 #if DEBUG
 				Debug.WriteLine($"I'm disconnecting from {channelName}");
@@ -182,7 +182,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
 		{
 
-			_logService.Log($"[Twitch-Service][CONNECTION] I left {channelName}",Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CONNECTION] I left {channelName}", Brushes.LightBlue);
 #if DEBUG
 			Debug.WriteLine($"I left {channelName}");
 #endif
@@ -216,7 +216,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 			}
 
 
-			_logService.Log($"[Twitch-Service][CHANNEL] {e.ChatMessage.DisplayName} : {e.ChatMessage.Message}",Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CHANNEL] {e.ChatMessage.DisplayName} : {e.ChatMessage.Message}", Brushes.LightBlue);
 #if DEBUG
 			Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} {e.ChatMessage.DisplayName}:{e.ChatMessage.Message}");
 #endif
@@ -242,7 +242,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 
 			//check if command exists in commands.json file
-			_logService.Log($"[Twitch-Service][CHANNEL] Command {command} received... ",Brushes.LightBlue);
+			_logService.Log($"[Twitch-Service][CHANNEL] Command {command} received... ", Brushes.LightBlue);
 
 			var mathcedCommand = _commands.FirstOrDefault(c => c.CommandText.Equals(command, StringComparison.InvariantCultureIgnoreCase));
 			if (mathcedCommand != null)
@@ -256,6 +256,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 			{
 
 				case "!roll":
+
 					HandleChallangeCommand(client, chatMessage);
 					break;
 				case "!leave":
@@ -270,8 +271,15 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 			if (chatMessage.IsModerator || chatMessage.IsBroadcaster)
 			{
+				if (!_obsService.ObsIsConnected)
+				{
+					_logService.Log($"[Twitch-Service][ERROR] OBS is not connected. Can't execute ROLL command Command have TryCount of [{_challangeCommandRequestCount}]", Brushes.LightBlue);
+					client.SendMessage(chatMessage.Channel, PickOBSConnectionErroMessage(chatMessage.Username, _challangeCommandRequestCount));
+					_challangeCommandRequestCount++;
+					return;
+				}
 
-				_logService.Log($"[Twitch-Service][ACTION] Handling Challange Command",Brushes.LightBlue);
+				_logService.Log($"[Twitch-Service][ACTION] Handling Challange Command", Brushes.LightBlue);
 
 				//Deactivating Text and Description sources
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
@@ -281,6 +289,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 				//Activating Overlay Source
 				_obsService.ActivateSource(Properties.Settings.Default.ObsOverlayScene, Properties.Settings.Default.ObsSourceOverlay);
+				_challangeCommandRequestCount = 0;
 			}
 		}
 
@@ -379,6 +388,152 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		}
 
+		private string PickOBSConnectionErroMessage(string username, int tryCount)
+		{
+			var messageList = new JsonArray {
+			  $"Hey, {username}, OBS isn’t connected! I feel like a balloon with no string—just floating aimlessly.",
+
+$"Uh-oh, {username}, no connection! I’m like a car with no fuel. Let’s fix this before I stall out!",
+
+$"OBS is missing its connection, {username}. I’m basically popcorn in a cold pan—no pop, just sadness.",
+
+$"Hey, {username}, looks like the link’s missing! I’m like a TV remote with dead batteries—no control here!",
+
+$"No connection, {username}? I feel like a bird trying to fly without wings. Let’s get reconnected!",
+
+$"OBS isn’t connected, {username}. I’m out here like a laptop with no Wi-Fi—completely useless!",
+
+$"Oops, {username}! No link detected. I’m like a sandwich without bread—just a pile of confusion.",
+
+$"OBS is disconnected, {username}, and I’m feeling like a GPS with no signal—lost and dramatic!",
+
+$"Connection missing, {username}! I’m like a rocket without fuel—ready to launch, but stuck on the ground.",
+
+$"OBS says nope, {username}. I’m like a pen that’s out of ink—can’t write, can’t work, just sitting here.",
+
+$"Hey, {username}, where’s my link? I’m like a lightbulb with no electricity—dim and disappointed.",
+
+$"OBS isn’t connected, {username}? I feel like a pizza with no cheese—this is not okay.",
+
+$"No connection detected, {username}. I’m basically a plane without a pilot—grounded and confused.",
+
+$"OBS is disconnected, {username}. I’m like a marathon runner with no shoes—going nowhere fast.",
+
+$"Oops, {username}, the link’s gone! I’m like a joke with no punchline—awkward and unproductive.",
+
+$"OBS isn’t connected, {username}? Great, now I’m just a toaster with no bread—pointless!",
+
+$"Connection missing, {username}? I feel like a phone with no signal—staring into the void.",
+
+$"OBS says ‘no connection,’ {username}. I’m like a kite with no wind—just stuck here!",
+
+$"Hey, {username}, OBS isn’t linked! I’m like a DJ with no turntables—what am I even doing here?",
+
+$"OBS isn’t connected, {username}? I feel like a movie with no ending—suspenseful and incomplete."
+			};
+
+			var messageListAnnoyed = new JsonArray
+			{
+				$"Seriously, {username}? OBS isn’t connected again! I’m starting to feel like a balloon with no string—help me help you!",
+
+$"Uh-oh, {username}, still no connection? I’m like a car with no fuel, and I’ve asked before! Plug me in already!",
+
+$"OBS is missing its connection, {username}. This is the {_challangeCommandRequestCount} time I’m saying it—I’m basically popcorn in a cold pan. Do something!",
+
+$"Hey, {username}, OBS is still not connected? I’m like a remote with dead batteries, and it’s getting old. Fix it!",
+
+$"No connection yet, {username}? I feel like a bird trying to fly without wings... and this bird is getting annoyed.",
+
+$"OBS isn’t connected, {username}. Didn’t I mention this before? I’m like a laptop with no Wi-Fi—still useless, still waiting!",
+
+$"Oops, {username}! No link detected—again. I’m like a sandwich without bread, and now I’m getting hangry!",
+
+$"OBS is disconnected, {username}. How many times do I have to say it? I’m a GPS with no signal—still lost, still dramatic!",
+
+$"Connection missing, {username}! I’m like a rocket without fuel—ready to launch, but I’ve been on the ground way too long now.",
+
+$"OBS says nope, {username}. I’m like a pen that’s out of ink, and at this point, I’ve run out of patience too!",
+
+$"Hey, {username}, where’s the link? I’ve been asking! I’m like a lightbulb with no electricity—dim, disappointed, and now frustrated.",
+
+$"OBS isn’t connected, {username}? For real? I’m a pizza with no cheese, and this situation is extra crusty now!",
+
+$"No connection detected, {username}. I’m basically a plane without a pilot, and I’ve been grounded for way too long!",
+
+$"OBS is still disconnected, {username}? I’m like a marathon runner with no shoes... and I’m running out of patience!",
+
+$"Oops, {username}, the link’s still gone! I’m a joke with no punchline—and at this point, the joke’s on me.",
+
+$"OBS isn’t connected, {username}? Great. I’m just a toaster with no bread, and I’m officially over it now.",
+
+$"Connection missing, {username}? I’m like a phone with no signal, and I’ve been waiting on bars for ages!",
+
+$"OBS says ‘no connection,’ {username}. AGAIN.’ I’m a kite with no wind—and my string is about to snap!",
+
+$"Hey, {username}, OBS still isn’t linked? I’m a DJ with no turntables... and now I’m just standing here annoyed!",
+
+$"OBS isn’t connected, {username}? Really? I feel like a movie with no ending, and now I’m just stuck in a bad sequel."
+			};
+
+			var messageListAngry = new JsonArray
+			{
+				$"Okay, {username}, OBS STILL isn’t connected? I’ve been asking, begging, pleading. Do I need to send a carrier pigeon or what?!",
+
+$"SERIOUSLY, {username}? No connection AGAIN? I’m about to become a balloon with no helium—and explode. Fix it already!",
+
+$"OBS is STILL not connected, {username}? I’m out here like a popcorn kernel in a cold pan—ready to pop, but now I’m just STEAMING.",
+
+$"Oh, come on, {username}. How many times do I need to ask? I’m like a car with no fuel, except now I’m about to burst into flames.",
+
+$"OBS isn’t connected, {username}? For real?! I’m a bird without wings—except now I’m more like a bird ready to peck someone. Get it done!",
+
+$"Hey, {username}, where’s my link? I’ve been polite. I’ve been patient. But I’m DONE. I’m a lightbulb, and I’m about to shatter.",
+
+$"OBS is STILL not connected, {username}? I’m over it. I’m a sandwich with no bread—except now I’m just crumbs of rage!",
+
+$"No connection, {username}? AGAIN?! I’m a rocket without fuel, and I’m ready to explode. Plug me in RIGHT NOW.",
+
+$"OBS says nope AGAIN, {username}? I’m a pen out of ink, but now I’m writing complaints in permanent marker. FIX. IT.",
+
+$"Hey, {username}, this is the last time I’m asking. I’m a kite without wind—but now I’m a storm cloud ready to rain fury.",
+
+$"OBS still isn’t connected, {username}? I’m a pizza with no cheese, and now I’m flipping the table and throwing the crust at you.",
+
+$"No connection detected, {username}. How is this STILL a problem? I’m about to ground this plane permanently. DO SOMETHING.",
+
+$"OBS isn’t connected, {username}. AGAIN. I’m a marathon runner with no shoes, but now I’m stomping in frustration. Get it DONE.",
+
+$"Oops, {username}, no link—again! No. More. Excuses. I’m a joke with no punchline, and now I’m the one laughing—maniacally.",
+
+$"OBS isn’t connected, {username}? I’m a toaster with no bread, and now I’m just toast. Burnt, fiery, angry toast.",
+
+$"Connection missing AGAIN, {username}? I’m a phone with no signal—but now I’m ready to throw the phone out the window.",
+
+$"OBS says ‘no connection,’ {username}. STILL?! I’m a kite with no wind, and now I’m ready to cut the string altogether.",
+
+$"Hey, {username}, OBS isn’t linked? AGAIN? I’m a DJ with no turntables, but now I’m about to smash the whole booth.",
+
+$"OBS isn’t connected, {username}? I’m a movie with no ending, but now it’s just a horror film—and you’re the main character. Fix it.",
+
+$"Okay, {username}, OBS still isn’t connected?! I’m a volcano now, and I’m about to erupt if you don’t sort this out RIGHT NOW!"
+
+			};
+
+
+			Random rand = new Random();
+
+
+			var selectedMessageList = tryCount switch
+			{
+				> 5 => messageListAngry,
+				> 3 => messageListAnnoyed,
+				_ => messageList,
+			};
+
+
+			return selectedMessageList[rand.Next(0, selectedMessageList.Count - 1)]?.ToString();
+
+		}
 
 		private string PickJoinMessage()
 		{

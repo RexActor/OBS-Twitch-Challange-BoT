@@ -8,8 +8,8 @@
              Background="LightGray">
     <Grid>
 
-        <GroupBox Header="Twitch Settings" Margin="10,10,500,300">
-            <Grid>
+        <GroupBox Header="Twitch Settings" Margin="10,10,500,352">
+            <Grid Height="150">
 
                 <Label Content="Twitch Username" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                 <Label Content="Twitch Auth" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
@@ -18,27 +18,31 @@
                 <PasswordBox x:Name="TwitchAuthTextBox"  HorizontalAlignment="Left" Margin="110,45,0,0" Password="TextBox" VerticalAlignment="Top" Width="183" />
                 <TextBox x:Name="TwitchChannelTextBox" HorizontalAlignment="Left" Margin="110,75,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="183" />
 
+                <Button x:Name="SaveTwitchSettingsBtn" Content="Save Twitch Settings" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Click="SaveTwitchSettingsBtn_Click" Width="124"/>
 
 
 
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="OBS Settings" Margin="10,240,500,150">
-            <Grid Margin="-1,0,1,0">
-                <Label Content="OBS Address" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90"/>
-                <Label Content="OBS Port" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="90"/>
-                <Label Content="OBS Password" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="90"/>
-                <TextBox x:Name="ObsAddressTextBox"  HorizontalAlignment="Left" Margin="110,15,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
-                <TextBox x:Name="ObsPortTextBox" HorizontalAlignment="Left" Margin="110,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
-                <PasswordBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="110,75,0,0"  Password="TextBox" VerticalAlignment="Top" Width="175"/>
+        <GroupBox Header="OBS Settings" Margin="10,200,500,150">
+            <Grid Margin="-1,0,1,0" Height="134">
+
+                <Label Content="OBS Address" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Grid.ColumnSpan="2"/>
+                <Label Content="OBS Port" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="90" Grid.ColumnSpan="2"/>
+                <Label Content="OBS Password" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="90" Grid.ColumnSpan="2"/>
+                <TextBox x:Name="ObsAddressTextBox"  HorizontalAlignment="Left" Margin="108,15,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+                <TextBox x:Name="ObsPortTextBox" HorizontalAlignment="Left" Margin="108,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="175"/>
+                <PasswordBox x:Name="ObsPasswordTextBox" HorizontalAlignment="Left" Margin="108,75,0,0"  Password="TextBox" VerticalAlignment="Top" Width="175"/>
+                <Button x:Name="SaveObsWebsocket" Content="Save OBS WebSocket Settings" HorizontalAlignment="Left" Margin="46,0,0,3" VerticalAlignment="Bottom" Click="SaveObsWebsocket_Click" Width="169"/>
+
 
             </Grid>
         </GroupBox >
 
 
 
-        <GroupBox Header="Obs Sources" Margin="400,10,0,286">
+        <GroupBox Header="Obs Sources" Margin="400,10,0,241">
             <Grid>
                 <Label Content="Scene" HorizontalAlignment="Left" Margin="6,16,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="100"/>
                 <Label Content="Title Source" HorizontalAlignment="Left" Margin="6,58,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.448,0" Width="100"/>
@@ -54,6 +58,7 @@
                 <ComboBox x:Name="OverlaySourceComboBox"   HorizontalAlignment="Left" Margin="111,159,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="OverlaySourceComboBox_SelectionChanged"/>
                 <Label Content="*source scene is in" FontSize="10" Foreground="red" HorizontalAlignment="Left" Margin="236,160,0,0" VerticalAlignment="Top" Width="108"/>
 
+                <Button x:Name="SaveOBSSettings" Content="Save OBS Settings" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Bottom" Click="SaveOBSSettings_Click" Width="105"/>
 
 
             </Grid>
@@ -62,7 +67,6 @@
 
         </GroupBox>
 
-        <Button x:Name="SaveTwitchSettingsBtn" Content="Save" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Bottom" Click="SaveTwitchSettingsBtn_Click" Width="105"/>
 
     </Grid>
 </UserControl>
