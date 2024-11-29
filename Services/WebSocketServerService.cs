@@ -105,7 +105,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 		public WebSocketServerService(ObsService obsService, TwitchService twitchService, LogService logService)
 		{
 			// Initialize WebSocket server on port 9090
-			_server = new WebSocketServer("ws://localhost:9090");
+			_server = new WebSocketServer($"{Properties.Settings.Default.WebsocketAddress}:{Properties.Settings.Default.WebsocketPort}");
 
 			// Add the custom behavior for handling incoming WebSocket connections
 			_server.AddWebSocketService("/challenge", () => new ChallengeWebSocketBehavior(obsService, twitchService, logService));
@@ -116,9 +116,9 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 			_server.Start();
 
-			_logService.Log($"[WebSocket-Service][CONNECTION] WebSocket server started on ws://localhost:9090", Brushes.Orange);
+			_logService.Log($"[WebSocket-Service][CONNECTION] WebSocket server started on {Properties.Settings.Default.WebsocketAddress}:{Properties.Settings.Default.WebsocketPort}", Brushes.Orange);
 #if DEBUG
-			Debug.WriteLine("WebSocket server started on ws://localhost:9090");
+			Debug.WriteLine($"Websocket Server Started on {Properties.Settings.Default.WebsocketAddress}:{Properties.Settings.Default.WebsocketPort}");
 #endif
 		}
 

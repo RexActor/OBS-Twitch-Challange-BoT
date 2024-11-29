@@ -67,6 +67,18 @@
 
         </GroupBox>
 
+        <GroupBox Header="Websocket Settings" Margin="400,305,0,45">
+            <Grid>
+                <Label Content="Websocket address:" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top" Width="124" />
+                <TextBox x:Name="WebsocketAddressTextBox"  HorizontalAlignment="Left" Margin="134,9,0,0" TextWrapping="Wrap" Text="ws://localhost" VerticalAlignment="Top" Width="175" Height="25"/>
+                <Label Content="Websocket Port:" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" Width="124" />
+                <TextBox x:Name="WebsocketPortTextBox"  HorizontalAlignment="Left" Margin="134,39,0,0" TextWrapping="Wrap" Text="9090" VerticalAlignment="Top" Width="68" Height="25"/>
+
+
+                <Button x:Name="SaveWebsocketSettings" Content="Save WebSocket Settings" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Bottom" Click="SaveWebsocketSettings_Click" Width="155" Height="27"/>
+            </Grid>
+        </GroupBox>
+
 
     </Grid>
 </UserControl>

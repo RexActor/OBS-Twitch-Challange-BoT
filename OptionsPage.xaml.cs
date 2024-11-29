@@ -38,6 +38,13 @@ namespace OBS_Twitch_Challange_BoT
 		public string ObsPassword { get; set; }
 
 
+
+		//Setting variables for WebSocket
+
+		public string WebsocketAddress { get; set; }
+		public int WebsocketPort { get; set; }
+
+
 		public OptionsPage(ObsService obsService)
 		{
 
@@ -108,6 +115,11 @@ namespace OBS_Twitch_Challange_BoT
 			ObsSourceOverlay = Properties.Settings.Default.ObsSourceOverlay;
 			ObsSceneOverlay = Properties.Settings.Default.ObsOverlayScene;
 
+			WebsocketAddress = Properties.Settings.Default.WebsocketAddress;
+			WebsocketPort = Convert.ToInt32(Properties.Settings.Default.WebsocketPort);
+
+
+
 			Dispatcher.Invoke(() =>
 			{
 
@@ -125,6 +137,10 @@ namespace OBS_Twitch_Challange_BoT
 				ObsAddressTextBox.Text = ObsAddress;
 				ObsPortTextBox.Text = ObsPort.ToString();
 				ObsPasswordTextBox.Password = ObsPassword;
+
+				WebsocketPortTextBox.Text = WebsocketPort.ToString();
+				WebsocketAddressTextBox.Text = WebsocketAddress;
+
 			});
 
 		}
@@ -237,7 +253,7 @@ namespace OBS_Twitch_Challange_BoT
 			Properties.Settings.Default.TwitchAuth = TwitchAuthTextBox.Password;
 			Properties.Settings.Default.TwitchChannel = TwitchChannelTextBox.Text;
 
-			
+
 
 #if (DEBUG)
 			Debug.WriteLine($"Saving Settings for Twitch Auth ");
@@ -312,7 +328,7 @@ namespace OBS_Twitch_Challange_BoT
 
 			// Ensure the SceneComboBox has a valid selection
 			string selectedScene = SceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
-		
+
 			// Ensure the TitleSourceComboBox has a valid selection
 			string selectedSourceTitle = TitleSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
 
@@ -340,6 +356,22 @@ namespace OBS_Twitch_Challange_BoT
 #endif
 
 			Properties.Settings.Default.Save();
+		}
+
+		private void SaveWebsocketSettings_Click(object sender, RoutedEventArgs e)
+		{
+
+
+
+			Properties.Settings.Default.WebsocketAddress = WebsocketAddressTextBox.Text;
+			Properties.Settings.Default.WebsocketPort = Convert.ToInt32(WebsocketPortTextBox.Text);
+			Properties.Settings.Default.Save();
+
+
+#if (DEBUG)
+			Debug.WriteLine($"Saving Settings for OBS Scenes  ");
+#endif
+
 		}
 	}
 }

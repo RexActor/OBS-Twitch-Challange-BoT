@@ -61,7 +61,7 @@ namespace OBS_Twitch_Challange_BoT.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("455")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4455")]
         public int ObsPort {
             get {
                 return ((int)(this["ObsPort"]));
@@ -152,6 +152,30 @@ namespace OBS_Twitch_Challange_BoT.Properties {
             }
             set {
                 this["ObsOverlayScene"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ws://localhost")]
+        public string WebsocketAddress {
+            get {
+                return ((string)(this["WebsocketAddress"]));
+            }
+            set {
+                this["WebsocketAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9090")]
+        public int WebsocketPort {
+            get {
+                return ((int)(this["WebsocketPort"]));
+            }
+            set {
+                this["WebsocketPort"] = value;
             }
         }
     }

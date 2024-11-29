@@ -314,12 +314,46 @@ namespace OBS_Twitch_Challange_BoT.Services
 				}
 				else
 				{
-					client.SendMessage(chatMessage.Channel, $"{chatMessage.DisplayName} who are you to tell me what to do?! Do you want to be timed out?");
+					client.SendMessage(chatMessage.Channel, PickRejectLeaveMessage(chatMessage.Username));
 				}
 
 
 			}
 		}
+
+		private string PickRejectLeaveMessage(string username)
+		{
+			var messageList = new JsonArray
+{
+	$"{username} who do you think you are, telling me what to do?! Want to be muted?",
+$"{username} don't push your luck with me! Do you want a timeout?",
+$"{username} are you really going to tell me how to behave? You want to be timed out?",
+$"{username} don't get ahead of yourself! Do you want to be silenced?",
+$"{username} who gave you the right to tell me what to do? Want to test my patience?",
+$"{username} don’t act like you’re in charge! You want to be banned for a bit?",
+$"{username} excuse me? Who do you think you're talking to?! Want to be removed for a timeout?",
+$"{username} you’re pushing it! Want to find out what happens if you keep going?",
+$"{username} don’t think you’re in control here! Want to be muted or timed out?",
+$"{username} stop right there! Want to be timed out for telling me what to do?",
+$"{username} are you seriously giving me orders? Want a timeout to think about it?",
+$"{username} who do you think you are, telling me what to do?! Test me and find out!",
+$"{username} you better rethink that! Want to be temporarily banned?",
+$"{username} who said you could give instructions around here? Want to get timed out?",
+$"{username} you really want to challenge me right now? Want a timeout to calm down?",
+$"{username} I don’t take kindly to orders! Want to find out what happens if you keep going?",
+$"{username} do you want to risk getting timed out? Because that’s where this is heading!",
+$"{username} don’t push your luck, or you’ll be timed out for sure!",
+$"{username} you’re asking for it! Want to be muted and ignored for a while?",
+$"{username} you better watch yourself! Do you want to be timed out or something?"
+};
+
+
+			Random rand = new Random();
+
+
+			return messageList[rand.Next(0, messageList.Count - 1)]?.ToString();
+		}
+
 
 		private string PickLeaveMessage()
 		{
