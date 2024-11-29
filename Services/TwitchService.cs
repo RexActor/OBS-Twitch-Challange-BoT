@@ -306,7 +306,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 				{
 					client.SendMessage(chatMessage.Channel, "I'm not responding on my own requests you dum dum!");
 				}
-				if (chatMessage.IsModerator)
+				if (chatMessage.IsModerator || chatMessage.IsBroadcaster)
 				{
 
 					client.SendMessage(chatMessage.Channel, PickLeaveMessage());
