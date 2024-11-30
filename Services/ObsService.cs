@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using static System.Net.Mime.MediaTypeNames;
+using Newtonsoft.Json;
 
 namespace OBS_Twitch_Challange_BoT.Services
 {
@@ -22,6 +23,9 @@ namespace OBS_Twitch_Challange_BoT.Services
 		OBSWebsocket obsSocket;
 		public bool _obsIsConnected;
 		private readonly LogService _logService;
+
+		// Event for connection status changes
+		public event Action<bool> ObsConnectionChanged;
 
 		public ObsService(LogService logService)
 		{
@@ -39,13 +43,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 					OnObsConnectionChanged(_obsIsConnected);
 				}
 			}
-		}
-
-
-
-		// Event for connection status changes
-		public event Action<bool> ObsConnectionChanged;
-
+		}	
 
 
 		public void ConnectWebSocket(string url, int port, string password)
@@ -110,7 +108,6 @@ namespace OBS_Twitch_Challange_BoT.Services
 				{ "text", text }
 			};
 
-
 			try
 			{
 				obsSocket.SetInputSettings(sourceName, message, false);
@@ -124,8 +121,6 @@ namespace OBS_Twitch_Challange_BoT.Services
 #endif
 			}
 		}
-
-
 
 		public void ActivateSource(string sceneName, string sourceName)
 		{
@@ -200,7 +195,6 @@ namespace OBS_Twitch_Challange_BoT.Services
 		{
 			var SceneItems = new List<string>();
 
-
 			try
 			{
 				var sceneList = obsSocket?.GetSceneList();
@@ -217,5 +211,74 @@ namespace OBS_Twitch_Challange_BoT.Services
 			return SceneItems;
 		}
 
+		public void UpdateOverlaySource(string filename,string sourceName)
+		{
+
+
+
+
+
+			string filePath = $"{filename.Replace("\\", "/")}";
+
+#if DEBUG
+			var settings = obsSocket.GetInputSettings(sourceName);
+			Debug.WriteLine($"Settings for {sourceName}: {settings.Settings}");
+			Debug.WriteLine(filePath);
+#endif
+
+			// Construct the new settings for the browser source
+			JObject message = new JObject
+		{
+			{ "local_file", filePath}, // Convert file path to a URL format
+			{ "width", 1920 }, // Set the width
+			{ "height", 1080 }, // Set the height
+			{ "is_local_file", true }, // Indicate that it's a local file
+			{ "shutdown", true }, // Shutdown source when not visible
+			{ "restart_when_active", true } // Refresh browser when scene becomes active
+		};
+
+			try
+			{
+				obsSocket.SetInputSettings(sourceName, message, false);
+				_logService.Log($"[OBS-Service][OVERLAY] Overlay Source Updated in OBS", Brushes.Green);
+
+			}
+			catch (Exception ex)
+			{
+				_logService.Log($"[OBS-Service][ERRROR] Error ocured while trying to update Overlay source: {ex.Message}", Brushes.Green);
+#if DEBUG
+				Debug.WriteLine($"Error ocured while trying to update Overlay source: {ex.Message}");
+#endif
+			}
+
+
+		}
+
+		public List<string> GetAllBrowserSources()
+		{
+			try
+			{
+				// Retrieve all sources (inputs) from OBS
+				var inputs = obsSocket.GetInputList();
+
+				// Filter sources to find those of type "browser_source"
+				var browserSources = inputs
+					.Where(input => input.InputKind?.ToString() == "browser_source")
+					.Select(input => input.InputName?.ToString())
+					.ToList();
+
+				// Log and return the list of browser source names
+				_logService.Log($"[OBS-Service] Found {browserSources} browser sources: {string.Join(", ", browserSources)}", Brushes.Green);
+				return browserSources;
+			}
+			catch (Exception ex)
+			{
+				_logService.Log($"[OBS-Service][ERROR] Error retrieving browser sources: {ex.Message}", Brushes.Red);
+#if DEBUG
+				Debug.WriteLine($"Error retrieving browser sources: {ex.Message}");
+#endif
+				return new List<string>();
+			}
+		}
 	}
 }

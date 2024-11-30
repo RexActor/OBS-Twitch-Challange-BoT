@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System.IO;
 
 namespace OBS_Twitch_Challange_BoT
 {
@@ -24,7 +25,6 @@ namespace OBS_Twitch_Challange_BoT
 		public string TwitchChannel { get; set; }
 
 
-
 		//Setting variables for OBS source and Scene which one will be manipulated
 		public string ObsScene { get; set; }
 		public string ObsSourceTitle { get; set; }
@@ -34,12 +34,13 @@ namespace OBS_Twitch_Challange_BoT
 
 		public string ObsSceneOverlay { get; set; }
 
+		public string ObsBrowserSource { get; set; }
+
 
 		//Setting variables for OBS
 		public string ObsAddress { get; set; }
 		public int ObsPort { get; set; }
 		public string ObsPassword { get; set; }
-
 
 
 		//Setting variables for WebSocket
@@ -48,21 +49,20 @@ namespace OBS_Twitch_Challange_BoT
 		public int WebsocketPort { get; set; }
 
 
+		public string ChallangeTitle { get; set; }
+
+
 		public OptionsPage(ObsService obsService, HtmlService htmlService, LogService logService)
 		{
 
 			_obsService = obsService;
 			_obsService.ObsConnectionChanged += OnObsConnectionChanged;
-
 			_htmlService = htmlService;
 			_logService = logService;
+
 			InitializeComponent();
-
-
-
-
 			ReloadSettings();
-			
+
 		}
 
 		private void OnObsConnectionChanged(bool isConnected)
@@ -98,10 +98,25 @@ namespace OBS_Twitch_Challange_BoT
 			if (_obsService?.ObsIsConnected == true) // Check if OBS is connected
 			{
 				GetScenes();
+				GetAllBrowserSources();
+				
 			}
 			LoadSettings();
 
 		}
+
+		private void GetAllBrowserSources()
+		{
+			var browserSource = _obsService.GetAllBrowserSources();
+
+			browserSource.ForEach(browserSource => { 
+			
+				OverlayBrowserSourceComboBox.Items.Add(browserSource);
+
+			});
+
+		}
+
 		// Make sure to unsubscribe when the page is unloaded
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
@@ -131,11 +146,13 @@ namespace OBS_Twitch_Challange_BoT
 			ObsSourceDesc = Properties.Settings.Default.ObsSourceDesc;
 			ObsSourceOverlay = Properties.Settings.Default.ObsSourceOverlay;
 			ObsSceneOverlay = Properties.Settings.Default.ObsOverlayScene;
+			ObsBrowserSource = Properties.Settings.Default.ObsBrowserSource;
 
 			WebsocketAddress = Properties.Settings.Default.WebsocketAddress;
 			WebsocketPort = Convert.ToInt32(Properties.Settings.Default.WebsocketPort);
 
 
+			ChallangeTitle = Properties.Settings.Default.ChallangeTitle;
 
 			Dispatcher.Invoke(() =>
 			{
@@ -145,6 +162,7 @@ namespace OBS_Twitch_Challange_BoT
 				DescSourceComboBox.SelectedItem = ObsSourceDesc;
 				OverlaySourceComboBox.SelectedItem = ObsSourceOverlay;
 				OverlaySourceSceneComboBox.SelectedItem = ObsSceneOverlay;
+				OverlayBrowserSourceComboBox.SelectedItem = ObsBrowserSource;
 
 
 				TwitchUserNameTextBox.Text = TwitchUserName;
@@ -158,6 +176,7 @@ namespace OBS_Twitch_Challange_BoT
 				WebsocketPortTextBox.Text = WebsocketPort.ToString();
 				WebsocketAddressTextBox.Text = WebsocketAddress;
 
+				ChallangeTitleTextBox.Text = ChallangeTitle;
 			});
 
 
@@ -168,7 +187,6 @@ namespace OBS_Twitch_Challange_BoT
 #endif
 
 		}
-
 
 		private void GetScenes()
 		{
@@ -216,27 +234,22 @@ namespace OBS_Twitch_Challange_BoT
 			if (TitleSourceComboBox.Items.Count > 0)
 			{
 				TitleSourceComboBox.Items.Clear();
-
 			}
 
 			if (DescSourceComboBox.Items.Count > 0)
 			{
 				DescSourceComboBox.Items.Clear();
-
 			}
 
 			var SourceNames = _obsService.GetSourceNames(sceneName);
 			foreach (var SourceName in SourceNames)
 			{
 
-
 				TitleSourceComboBox.Items.Add($"{SourceName.SourceName}");
-
 				DescSourceComboBox.Items.Add($"{SourceName.SourceName}");
 			}
 			if (ObsSourceTitle != string.Empty) { TitleSourceComboBox.SelectedItem = ObsSourceTitle; }
 		}
-
 
 		private void GetSceneItemsForOverlay(string sceneName)
 		{
@@ -245,30 +258,23 @@ namespace OBS_Twitch_Challange_BoT
 				return;
 			}
 
-
 			OverlaySourceComboBox.IsEnabled = true;
 
 			if (OverlaySourceComboBox.Items.Count > 0)
 			{
 				OverlaySourceComboBox.Items.Clear();
-
 			}
-
-
 
 			var SourceNames = _obsService.GetSourceNames(sceneName);
 			foreach (var SourceName in SourceNames)
 			{
-
-
 				OverlaySourceComboBox.Items.Add($"{SourceName.SourceName}");
-
 
 			}
 			if (ObsSourceOverlay != string.Empty) { OverlaySourceComboBox.SelectedItem = ObsSourceOverlay; }
 		}
 
-
+		
 
 
 		private void SaveTwitchSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -364,7 +370,8 @@ namespace OBS_Twitch_Challange_BoT
 
 			// Ensure the OverlaySourceComboBox has a valid selection
 			string selectedOverlayScene = OverlaySourceSceneComboBox.SelectedItem as string; // Make sure it's a valid scene name
-
+																							 // Ensure the OverlaySourceComboBox has a valid selection
+			string selectedOverlayBrowserSource = OverlayBrowserSourceComboBox.SelectedItem as string; // Make sure it's a valid scene name
 
 
 
@@ -373,6 +380,7 @@ namespace OBS_Twitch_Challange_BoT
 			Properties.Settings.Default.ObsSourceOverlay = selectedOverlaySource;
 			Properties.Settings.Default.ObsScene = selectedScene;
 			Properties.Settings.Default.ObsOverlayScene = selectedOverlayScene;
+			Properties.Settings.Default.ObsBrowserSource = selectedOverlayBrowserSource;
 			_logService.Log($"[OPTIONS][SAVE] Saving OBS Settings for Scenes and Overlays", Brushes.Yellow);
 
 #if (DEBUG)
@@ -389,7 +397,7 @@ namespace OBS_Twitch_Challange_BoT
 
 			Properties.Settings.Default.WebsocketAddress = WebsocketAddressTextBox.Text;
 			Properties.Settings.Default.WebsocketPort = Convert.ToInt32(WebsocketPortTextBox.Text);
-		
+
 			_logService.Log($"[OPTIONS][SAVE] Saving WebsocketSettings", Brushes.Yellow);
 
 #if (DEBUG)
@@ -400,13 +408,40 @@ namespace OBS_Twitch_Challange_BoT
 
 		private void GenerateHTMLFileBtn_Click(object sender, RoutedEventArgs e)
 		{
-
-			_logService.Log($"[OPTIONS][SAVE] Generating HTML File", Brushes.Yellow);
+			string filePath = Path.Combine($"{Directory.GetCurrentDirectory()}\\Html\\Index.html");
+			_logService.Log($"[OPTIONS][HTML] Generating HTML File....", Brushes.Yellow);
 
 #if (DEBUG)
 			Debug.WriteLine($"Generating HTML File");
 #endif
-			_htmlService.GenerateHTMLFile("Index.html");
+			_htmlService.GenerateHTMLFile("Index.html", ChallangeTitleTextBox.Text);
+
+			_obsService.UpdateOverlaySource(filePath, ObsBrowserSource);
+			_logService.Log($"[OPTIONS][HTML] HTML File Generated", Brushes.Yellow);
+
+
+		}
+
+		private void SaveOverlaySettings_Click(object sender, RoutedEventArgs e)
+		{
+
+			_logService.Log($"[OPTIONS][SAVE] Saving HTML Settings....", Brushes.Yellow);
+			Properties.Settings.Default.ChallangeTitle = ChallangeTitleTextBox.Text;
+			ChallangeTitle = ChallangeTitleTextBox.Text;
+			Properties.Settings.Default.Save();
+
+
+			_logService.Log($"[OPTIONS][SAVE] HTML Settings saved", Brushes.Yellow);
+
+
+#if DEBUG
+			Debug.Write("Saving Overlay Settings");
+#endif
+		}
+
+		private void OverlayBrowserSource_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			
 		}
 	}
 }

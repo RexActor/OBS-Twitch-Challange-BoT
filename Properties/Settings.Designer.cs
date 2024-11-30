@@ -178,5 +178,29 @@ namespace OBS_Twitch_Challange_BoT.Properties {
                 this["WebsocketPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Challange")]
+        public string ChallangeTitle {
+            get {
+                return ((string)(this["ChallangeTitle"]));
+            }
+            set {
+                this["ChallangeTitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ObsBrowserSource {
+            get {
+                return ((string)(this["ObsBrowserSource"]));
+            }
+            set {
+                this["ObsBrowserSource"] = value;
+            }
+        }
     }
 }

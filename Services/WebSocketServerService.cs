@@ -65,7 +65,14 @@ namespace OBS_Twitch_Challange_BoT.Services
 					_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceDesc);
 
 					_logService.Log($"[WebSocket-Service][Action] We are rolling for new Challange:", Brushes.Orange);
-					_twitchService.SendMessage("We are rolling for new Challange");
+					if (_twitchService.TwitchIsConnected)
+					{
+						_twitchService.SendMessage("We are rolling for new Challange");
+					}
+					else
+					{
+						_logService.Log($"[WebSocket-Service][TWITCH] Twitch is not connected. Can't send message", Brushes.Orange);
+					}
 				}
 
 				if (!isValidJson(e.Data))
@@ -81,9 +88,15 @@ namespace OBS_Twitch_Challange_BoT.Services
 				// Respond to client with the message (optional)
 				Send($"Server received: {e.Data}");
 
-				_logService.Log($"[WebSocket-Service][Action] WChallange Selected Title: {challange.Title} Description: {challange.Desc}", Brushes.Orange);
-				_twitchService.SendMessage($"We will do {challange.Title} challange");
-
+				_logService.Log($"[WebSocket-Service][Action] Challange Selected Title: {challange.Title} Description: {challange.Desc}", Brushes.Orange);
+				if (_twitchService.TwitchIsConnected)
+				{
+					_twitchService.SendMessage($"We will do {challange.Title} challange");
+				}
+				else
+				{
+					_logService.Log($"[WebSocket-Service][TWITCH] Twitch is not connected. Can't send message", Brushes.Orange);
+				}
 
 				await Task.Delay(5000);
 

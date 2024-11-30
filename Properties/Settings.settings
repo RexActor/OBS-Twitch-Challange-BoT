@@ -41,5 +41,11 @@
     <Setting Name="WebsocketPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">9090</Value>
     </Setting>
+    <Setting Name="ChallangeTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Challange</Value>
+    </Setting>
+    <Setting Name="ObsBrowserSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

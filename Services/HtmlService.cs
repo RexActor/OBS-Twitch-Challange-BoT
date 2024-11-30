@@ -14,7 +14,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
         readonly static string fileDirectory = $"{Directory.GetCurrentDirectory()}/Html/";
 
-        public void GenerateHTMLFile(string htmlFile)
+        public void GenerateHTMLFile(string htmlFile,string title)
         {
 
             GenerateJavaScriptFile("main.js");
@@ -26,7 +26,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
             //write content into file
 
-            string htmlContent = @"
+            string htmlContent = $@"
             <!DOCTYPE html>
 <html lang=""en"">
 
@@ -40,7 +40,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 <body>
     <div class=""container"">
         <div class=""title"">
-            <h1>Shoot Target To find out your challenge</h1>
+            <h1>{title}</h1>
 
         </div>
         <div id=""targets-container""></div>
