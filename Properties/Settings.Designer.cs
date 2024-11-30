@@ -202,5 +202,29 @@ namespace OBS_Twitch_Challange_BoT.Properties {
                 this["ObsBrowserSource"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ChallangeList {
+            get {
+                return ((string)(this["ChallangeList"]));
+            }
+            set {
+                this["ChallangeList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public int ChallangeCount {
+            get {
+                return ((int)(this["ChallangeCount"]));
+            }
+            set {
+                this["ChallangeCount"] = value;
+            }
+        }
     }
 }

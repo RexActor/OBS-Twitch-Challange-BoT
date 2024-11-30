@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.IO;
+using OBS_Twitch_Challange_BoT.Models;
+using Newtonsoft.Json;
 
 namespace OBS_Twitch_Challange_BoT
 {
@@ -36,6 +38,8 @@ namespace OBS_Twitch_Challange_BoT
 
 		public string ObsBrowserSource { get; set; }
 
+		public string ChallangeList { get; set; }
+
 
 		//Setting variables for OBS
 		public string ObsAddress { get; set; }
@@ -50,7 +54,7 @@ namespace OBS_Twitch_Challange_BoT
 
 
 		public string ChallangeTitle { get; set; }
-
+		List<Challange> SelectedChallangeList { get; set; }
 
 		public OptionsPage(ObsService obsService, HtmlService htmlService, LogService logService)
 		{
@@ -100,17 +104,31 @@ namespace OBS_Twitch_Challange_BoT
 				GetScenes();
 				GetAllBrowserSources();
 				
+
 			}
+			GetChallangeFiles();
 			LoadSettings();
 
+		}
+
+		private void GetChallangeFiles()
+		{
+			var _filePath = Path.Combine($"{Directory.GetCurrentDirectory()}\\Other Files\\");
+			string[]files = Directory.GetFiles( _filePath );
+
+			ChallangeListBox.Items.Clear();
+			foreach (string file in files) {
+				ChallangeListBox.Items.Add(Path.GetFileName(file));
+			}
 		}
 
 		private void GetAllBrowserSources()
 		{
 			var browserSource = _obsService.GetAllBrowserSources();
 
-			browserSource.ForEach(browserSource => { 
-			
+			browserSource.ForEach(browserSource =>
+			{
+
 				OverlayBrowserSourceComboBox.Items.Add(browserSource);
 
 			});
@@ -153,6 +171,7 @@ namespace OBS_Twitch_Challange_BoT
 
 
 			ChallangeTitle = Properties.Settings.Default.ChallangeTitle;
+			ChallangeList = Properties.Settings.Default.ChallangeList;
 
 			Dispatcher.Invoke(() =>
 			{
@@ -177,6 +196,7 @@ namespace OBS_Twitch_Challange_BoT
 				WebsocketAddressTextBox.Text = WebsocketAddress;
 
 				ChallangeTitleTextBox.Text = ChallangeTitle;
+				ChallangeListBox.SelectedItem = ChallangeList;
 			});
 
 
@@ -274,7 +294,7 @@ namespace OBS_Twitch_Challange_BoT
 			if (ObsSourceOverlay != string.Empty) { OverlaySourceComboBox.SelectedItem = ObsSourceOverlay; }
 		}
 
-		
+
 
 
 		private void SaveTwitchSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -414,6 +434,9 @@ namespace OBS_Twitch_Challange_BoT
 #if (DEBUG)
 			Debug.WriteLine($"Generating HTML File");
 #endif
+
+
+			_htmlService.GenerateJavaScriptFile("main.js", Properties.Settings.Default.WebsocketAddress, Properties.Settings.Default.WebsocketPort, SelectedChallangeList,9);
 			_htmlService.GenerateHTMLFile("Index.html", ChallangeTitleTextBox.Text);
 
 			_obsService.UpdateOverlaySource(filePath, ObsBrowserSource);
@@ -428,6 +451,15 @@ namespace OBS_Twitch_Challange_BoT
 			_logService.Log($"[OPTIONS][SAVE] Saving HTML Settings....", Brushes.Yellow);
 			Properties.Settings.Default.ChallangeTitle = ChallangeTitleTextBox.Text;
 			ChallangeTitle = ChallangeTitleTextBox.Text;
+
+			
+			Properties.Settings.Default.ChallangeList = ChallangeList;
+			ChallangeList = ChallangeListBox.SelectedItem.ToString();
+
+			LoadChallanges(ChallangeList);
+
+
+
 			Properties.Settings.Default.Save();
 
 
@@ -439,9 +471,40 @@ namespace OBS_Twitch_Challange_BoT
 #endif
 		}
 
+		private void LoadChallanges(string challangeList)
+		{
+			var _filePath = Path.Combine($"{Directory.GetCurrentDirectory()}/Other Files/{challangeList}");
+
+			try
+			{
+				var jsContent = File.ReadAllText(_filePath);
+				 SelectedChallangeList = JsonConvert.DeserializeObject<List<Challange>>(jsContent);
+
+				_logService.Log($"[OPTIONS][Challanges] Challanges loaded", Brushes.Yellow);
+			}
+			catch (Exception ex)
+			{
+
+				_logService.Log($"[OPTIONS][ERROR] Can't load challanges", Brushes.Yellow);
+
+#if DEBUG
+				Debug.WriteLine($"Can't Load Challanges {ex.Message}");
+#endif
+			}
+
+
+
+		}
+
+
 		private void OverlayBrowserSource_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			
+
+
+
+
+
+
 		}
 	}
 }

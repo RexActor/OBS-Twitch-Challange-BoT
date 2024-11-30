@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Team Kill Leader",
+    "desc": "Be the player with the most kills on your team at the end of the match."
+  },
+  {
+    "title": "Revive Master",
+    "desc": "Revive the most teammates in a single match."
+  },
+  {
+    "title": "Shared Victory",
+    "desc": "Complete the match without any of your teammates getting eliminated."
+  },
+  {
+    "title": "Medic",
+    "desc": "Heal a teammate to full health using medical supplies."
+  },
+  {
+    "title": "Gulag Savior",
+    "desc": "Save a teammate from the Gulag by winning a 1v1 match for them."
+  },
+  {
+    "title": "Ammo Support",
+    "desc": "Provide the most ammo to your teammates during a match."
+  },
+  {
+    "title": "Vehicle Squad",
+    "desc": "Successfully escape with your entire squad in a vehicle."
+  },
+  {
+    "title": "Multi-Kill Support",
+    "desc": "Assist in 5 or more kills with your teammates in a single match."
+  },
+  {
+    "title": "No One Left Behind",
+    "desc": "Finish the match with your entire squad alive and in the top 10."
+  },
+  {
+    "title": "Enemy Distraction",
+    "desc": "Distract an enemy long enough for your team to eliminate them."
+  },
+  {
+    "title": "Stealth Squad",
+    "desc": "Complete a match without alerting the enemy or causing a firefight."
+  },
+  {
+    "title": "Loadout Master",
+    "desc": "Help your team gather the best loadouts during the match."
+  },
+  {
+    "title": "Squad Tactician",
+    "desc": "Coordinate a successful strategy with your squad that leads to victory."
+  },
+  {
+    "title": "Split Focus",
+    "desc": "Successfully flank enemies while your squad is holding the frontline."
+  },
+  {
+    "title": "Safe Zone Coordination",
+    "desc": "Keep your squad in the safest part of the map at all times during the match."
+  },
+  {
+    "title": "Communicator",
+    "desc": "Successfully communicate the most important events to your team (e.g., enemy locations, plans, etc.)."
+  },
+  {
+    "title": "Elite Teamwork",
+    "desc": "Finish the match with a 100% team survival rate and at least one teammate with the most kills."
+  },
+  {
+    "title": "Squad Scavenger",
+    "desc": "Be the player who collects the most loot and distributes it to your squad."
+  },
+  {
+    "title": "Decoy Specialist",
+    "desc": "Place decoys to confuse the enemy, allowing your team to make a strategic attack."
+  },
+  {
+    "title": "Strategic Revival",
+    "desc": "Revive a teammate in a dangerous area and help them survive the following battle."
+  },
+  {
+    "title": "In Sync",
+    "desc": "Successfully synchronize your attack with your team to eliminate all enemies in a given area."
+  }
+]

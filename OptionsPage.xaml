@@ -84,12 +84,14 @@
 
         <GroupBox Header="Overlay Settings" Margin="10,390,500,10">
 
-            <Grid>
+            <Grid Height="114">
                 <Label Content="Challange Title:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="124" />
-                <TextBox x:Name="ChallangeTitleTextBox"  HorizontalAlignment="Left" Margin="134,10,0,77" TextWrapping="Wrap" Text="Challange" Width="110"/>
+                <TextBox x:Name="ChallangeTitleTextBox"  HorizontalAlignment="Left" Margin="134,10,0,0" TextWrapping="Wrap" Text="Challange" Width="110" Height="23" VerticalAlignment="Top"/>
 
                 <Button x:Name="GenerateHTMLFileBtn" Content="Generate HTML File" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Click="GenerateHTMLFileBtn_Click" Width="124" Height="27"/>
                 <Button x:Name="SaveOverlaySettings" Content="Save Overlay Settings" HorizontalAlignment="Left" Margin="149,0,0,10" VerticalAlignment="Bottom" Click="SaveOverlaySettings_Click" Width="133" Height="27"/>
+                <Label Content="Challange List:" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" Width="124" />
+                <ComboBox x:Name="ChallangeListBox"   HorizontalAlignment="Left" Margin="134,38,0,0" VerticalAlignment="Top" Width="120" />
 
             </Grid>
 

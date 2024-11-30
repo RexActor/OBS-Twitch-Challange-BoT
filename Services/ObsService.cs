@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 using static System.Net.Mime.MediaTypeNames;
 using Newtonsoft.Json;
+using System.Reflection.Metadata.Ecma335;
 
 namespace OBS_Twitch_Challange_BoT.Services
 {
@@ -43,7 +44,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 					OnObsConnectionChanged(_obsIsConnected);
 				}
 			}
-		}	
+		}
 
 
 		public void ConnectWebSocket(string url, int port, string password)
@@ -211,10 +212,15 @@ namespace OBS_Twitch_Challange_BoT.Services
 			return SceneItems;
 		}
 
-		public void UpdateOverlaySource(string filename,string sourceName)
+		public void UpdateOverlaySource(string filename, string sourceName)
 		{
 
+			if (!obsSocket.IsConnected)
+			{
 
+				_logService.Log($"[OBS-Service][ERROR] Overlay Source Update FAILED! OBS is not connected", Brushes.Green);
+				return;
+			}
 
 
 
@@ -267,8 +273,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 					.Select(input => input.InputName?.ToString())
 					.ToList();
 
-				// Log and return the list of browser source names
-				_logService.Log($"[OBS-Service] Found {browserSources} browser sources: {string.Join(", ", browserSources)}", Brushes.Green);
+
 				return browserSources;
 			}
 			catch (Exception ex)

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using OBS_Twitch_Challange_BoT.Models;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,582 +12,453 @@ using System.Threading.Tasks;
 
 namespace OBS_Twitch_Challange_BoT.Services
 {
-    public class HtmlService
-    {
+	public class HtmlService
+	{
 
-        readonly static string fileDirectory = $"{Directory.GetCurrentDirectory()}/Html/";
+		readonly static string fileDirectory = $"{Directory.GetCurrentDirectory()}/Html/";
 
-        public void GenerateHTMLFile(string htmlFile,string title)
-        {
+		public void GenerateHTMLFile(string htmlFile,string title)
+		{
 
-            GenerateJavaScriptFile("main.js");
-            GenerateCSSFile("style.css");
+		   
+			GenerateCSSFile("style.css");
 
-            //check if file exists, if not then generate file
+			//check if file exists, if not then generate file
 
-            FileExists(htmlFile);
+			FileExists(htmlFile);
 
-            //write content into file
+			//write content into file
 
-            string htmlContent = $@"
-            <!DOCTYPE html>
+			string htmlContent = $@"
+			<!DOCTYPE html>
 <html lang=""en"">
 
 <head>
-    <meta charset=""UTF-8"">
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-    <title>Challange</title>
-    <link rel=""stylesheet"" href=""style.css"">
+	<meta charset=""UTF-8"">
+	<meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+	<title>Challange</title>
+	<link rel=""stylesheet"" href=""style.css"">
 </head>
 
 <body>
-    <div class=""container"">
-        <div class=""title"">
-            <h1>{title}</h1>
+	<div class=""container"">
+		<div class=""title"">
+			<h1>{title}</h1>
 
-        </div>
-        <div id=""targets-container""></div>
-        <div id=""challenge-result"" class=""hidden"">
-            <div>
-                <h2 id=""selected-challenge""></h2>
-            </div>
-            <h3 id=""selected-challenge-description"">
-            </h3>
-        </div>
-    </div>
+		</div>
+		<div id=""targets-container""></div>
+		<div id=""challenge-result"" class=""hidden"">
+			<div>
+				<h2 id=""selected-challenge""></h2>
+			</div>
+			<h3 id=""selected-challenge-description"">
+			</h3>
+		</div>
+	</div>
 
-    <script src=""main.js""></script>
+	<script src=""main.js""></script>
 </body>
 
 </html>
 
 ";
-            string filePath = Path.Combine(fileDirectory, htmlFile);
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(filePath))
-                {
-                    writer.WriteLine(htmlContent);
+			string filePath = Path.Combine(fileDirectory, htmlFile);
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(filePath))
+				{
+					writer.WriteLine(htmlContent);
 
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"An Error occured while writing to the file :{ex.Message}");
-            }
-        }
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"An Error occured while writing to the file :{ex.Message}");
+			}
+		}
 
-        public void GenerateJavaScriptFile(string jsFileName)
-        {
+		public void GenerateJavaScriptFile(string jsFileName,string WebSocketAddress,int webSocketPort,List<Challange> challanges,int challangeCount)
+		{
 
-            //check if file exists, if not then generate file
-            FileExists(jsFileName);
+		  
 
-            string jsContent = @"
-const challengeCount = 9;
-const OBS_ADDRESS = ""192.168.0.12"";
-const OBS_PORT = 4455;
-const OBS_PASSWORD = ""CLx786mDzBfysROx"";
+			// Generate the challenges list dynamically
+			string challengeJson = JsonConvert.SerializeObject(challanges);
 
-const TITLE_TEXT_SOURCE = ""Challange Title"";
-const DESCRIPTION_TEXT_SOURCE = ""Challange Desc"";
-//sound effect when choosing targets
+			string jsContent = $@"
+	// Sound effect when choosing targets
+var challengeCount = {challangeCount};
+	// List of challenges
+	const challenges = {challengeJson};
 
-// List of challenges
-const challenges = [
-  {
-    title: ""X Kills in a Game"",
-    desc: ""Get a specific number of kills (e.g., 10, 15, 20). Adjust based on your skill level"",
-  },
-  {
-    title: ""One-Gun Kill"",
-    desc: ""Get all your kills using only one type of weapon (e.g., pistols, snipers, or shotguns). "",
-  },
-  {
-    title: ""No Reload"",
-    desc: ""You're not allowed to reload during combat. Must switch to another weapon or melee."",
-  },
-  {
-    title: ""Revenge Hunter"",
-    desc: ""Hunt down and eliminate the player who killed you if you return via the Gulag."",
-  },
-  {
-    title: ""Execution-Only"",
-    desc: "" Get at least one execution/finishing move in the game."",
-  },
-  {
-    title: ""Headshot Only"",
-    desc: ""Every kill must be a headshot. Any non-headshot kill doesn't count."",
-  },
-  {
-    title: ""Random Loadout"",
-    desc: "" Use a randomized loadout generated by viewers or a Warzone loadout generator tool"",
-  },
-  {
-    title: ""Ground Loot Only"",
-    desc: "" You can only use weapons and gear found on the ground - no loadout drops."",
-  },
-  {
-    title: ""No Attachments"",
-    desc: "" Use guns without any attachments."",
-  },
-  {
-    title: ""Throwables Only"",
-    desc: "" All kills must be with grenades, Molotovs, throwing knives, or C4."",
-  },
-  {
-    title: ""Melee Only"",
-    desc: "" Get all your kills with melee weapons or bare fists."",
-  },
-  {
-    title: ""No Buy Station"",
-    desc: ""Survive without using a buy station (no UAVs, loadout purchases, or revives). "",
-  },
-  {
-    title: ""Pacifist"",
-    desc: "" Try to survive as long as possible without killing anyone."",
-  },
-  {
-    title: ""Circle Hugger"",
-    desc: "" Stick to the edge of the safe zone the entire game and avoid the center. "",
-  },
-  {
-    title: ""Gulag-Free Run"",
-    desc: ""If you die, you must quit the match - no Gulag allowed. "",
-  },
-  {
-    title: ""Sniper's Nest"",
-    desc: "" Stay on rooftops or high ground for the entire game. "",
-  },
-  {
-    title: ""No Armor Plates"",
-    desc: "" Play the game without equipping any armor plates. "",
-  },
-  {
-    title: ""No Sprinting"",
-    desc: "" You're not allowed to sprint during the game. "",
-  },
-  {
-    title: ""Chat-Selected Drop"",
-    desc: "" Let the chat choose where you drop. "",
-  },
-  {
-    title: ""Chat-Driven Contracts"",
-    desc: "" Let viewers decide which contract you pick next (bounty, scavenger, etc.)."",
-  },
-  {
-    title: ""Kill Count Prediction"",
-    desc: "" Viewers guess how many kills you'll get, and you try to beat their predictions. "",
-  },
-  {
-    title: ""No Map"",
-    desc: "" Play without looking at the map or minimap. "",
-  },
-];
+	// WebSocket to connect to WPF application
+	class WebSocketClient {{
+		constructor(url) {{
+			this.url = url;
+			this.socket = null;
+		}}
 
+		// Method to establish WebSocket connection
+		connect() {{
+			this.socket = new WebSocket(this.url); // Create a new WebSocket connection
 
+			// Define event handlers
+			this.socket.onopen = this.onOpen.bind(this);
+			this.socket.onmessage = this.onMessage.bind(this);
+			this.socket.onerror = this.onError.bind(this);
+			this.socket.onclose = this.onClose.bind(this);
+		}}
 
+		// Called when the WebSocket connection is open
+		onOpen() {{
+			console.log('Connection with WPF is open');
+		}}
 
+		// Called when a message is received from the WebSocket server
+		onMessage(event) {{
+			console.log('Received from WPF:', event.data);
+		}}
 
-////// DO NOT CHANGE ANYTHING BELOW
-///
+		// Called when an error occurs with the WebSocket connection
+		onError(error) {{
+			console.error('WebSocket error:', error);
+		}}
 
+		// Called when the WebSocket connection is closed
+		onClose() {{
+			console.log('WebSocket connection closed');
+		}}
 
-//// WEBSOCKET TO CONNECT TO WPF APPLICATION
-///
-class WebSocketClient {
-    constructor(url) {
-        this.url = url;
-        this.socket = null;
-    }
+		// Method to send a message through the WebSocket connection
+		sendMessage(message) {{
+			if (this.socket && this.socket.readyState === WebSocket.OPEN) {{
+				this.socket.send(message);
+			}} else {{
+				console.error('WebSocket is not open. Cannot send message.');
+			}}
+		}}
 
-    // Method to establish WebSocket connection
-    connect() {
-        this.socket = new WebSocket(this.url); // Create a new WebSocket connection
+		// Method to close the WebSocket connection
+		close() {{
+			if (this.socket) {{
+				this.socket.close();
+			}}
+		}}
+	}}
 
-        // Define event handlers
-        this.socket.onopen = this.onOpen.bind(this);
-        this.socket.onmessage = this.onMessage.bind(this);
-        this.socket.onerror = this.onError.bind(this);
-        this.socket.onclose = this.onClose.bind(this);
-    }
+	// WebSocket Client initialization with dynamic WebSocket address and port
+	const wsClient = new WebSocketClient('{WebSocketAddress}:{webSocketPort}/challenge');
+	wsClient.connect();
 
-    // Called when the WebSocket connection is open
-    onOpen() {
-        
-        console.log(""Conenction with WPF is open:"");
-    }
+	// Select challenge count from available challenges
+	var selectedChallenges = [];
 
-    // Called when a message is received from the WebSocket server
-    onMessage(event) {
-        console.log(""Received from WPF:"", event.data);
-    }
+	while (selectedChallenges.length < challengeCount) {{
+		var chosenChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+		if (!selectedChallenges.includes(chosenChallenge)) {{
+			selectedChallenges.push(chosenChallenge);
+		}}
+	}}
 
-    // Called when an error occurs with the WebSocket connection
-    onError(error) {
-        console.error(""WebSocket error:"", error);
-    }
+	// Create targets dynamically
+	const targetsContainer = document.getElementById('targets-container');
 
-    // Called when the WebSocket connection is closed
-    onClose() {
-        console.log(""WebSocket connection closed"");
-    }
+	// Function to create targets
+	function createTargets() {{
+		for (let i = 0; i < selectedChallenges.length; i++) {{
+			const target = document.createElement('div');
+			target.classList.add('target');
+			target.setAttribute('data-index', i); // Store index in data attribute
+			targetsContainer.appendChild(target);
+		}}
+	}}
 
-    // Method to send a message through the WebSocket connection
-    sendMessage(message) {
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-            this.socket.send(message);
-        } else {
-            console.error(""WebSocket is not open. Cannot send message."");
-        }
-    }
+	// Function to simulate randomly shooting a target
+	function shootRandomTarget() {{
+		wsClient.sendMessage('rolling challenge');
+		const targets = document.querySelectorAll('.target');
+		const randomTargetIndex = Math.floor(Math.random() * targets.length);
+		const randomTarget = targets[randomTargetIndex];
 
-    // Method to close the WebSocket connection
-    close() {
-        if (this.socket) {
-            this.socket.close();
-        }
-    }
-}
+		// Clearing TEXT SOURCES before applying new challenge
+		let selectionInProgress = true;
+		let counter = 0;
+		const highlightInterval = setInterval(() => {{
+			const randomTargetIndex = Math.floor(Math.random() * targets.length); // Select random target
+			const target = targets[randomTargetIndex];
+
+			target.classList.add('target-highlight'); // Highlight the target
+
+			// Reset previous target highlight after a short time
+			setTimeout(() => {{
+				target.classList.remove('target-highlight');
+			}}, 250);
+
+			counter++;
+			if (counter >= 10) {{
+				clearInterval(highlightInterval); // Stop the random highlight process
+				selectionInProgress = false;
+				target.classList.remove('target-highlight');
+				randomTarget.classList.add('target-shot'); // Shot effect on the selected target
+
+				// Select a random challenge
+				const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+
+				// Display the selected challenge
+				const challengeResult = document.getElementById('challenge-result');
+				const selectedChallengeElement = document.getElementById('selected-challenge');
+				const selectedChallengeDescElement = document.getElementById('selected-challenge-description');
+				const textDisplayInterval = setInterval(() => {{
+					selectedChallengeElement.textContent = randomChallenge.Title;
+					selectedChallengeDescElement.textContent = randomChallenge.Desc;
+				   
+					wsClient.sendMessage(JSON.stringify(randomChallenge));
+					clearInterval(textDisplayInterval);
+				}}, 500);
+
+				challengeResult.classList.remove('hidden');
+			}}
+		}}, 500); // Change target every 500ms
+	}}
+
+	// Initialize the game by creating targets and automatically shooting a random target
+	createTargets();
+
+	// Add a delay before starting the target selection process
+	setTimeout(() => {{
+		shootRandomTarget();
+	}}, 1500); // 1.5 second delay before the selection process starts
+	";
+
+			string filePath = Path.Combine(fileDirectory, jsFileName);
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(filePath))
+				{
+					writer.WriteLine(jsContent);
+
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"An Error occured while writing to the file :{ex.Message}");
+			}
+
+		}
 
 
-const wsClient = new WebSocketClient('ws://localhost:9090/challenge');
-// Connect to the WebSocket server
-wsClient.connect();
-
-////END OF WEBSOCKET
+		public void GenerateCSSFile(string cssFileName)
+		{
 
 
+			//check if file exists, if not then generate file
+			FileExists(cssFileName);
 
-
-
-
-//select challenge count from available challenges
-
-var selectedChallenges = [];
-
-while (selectedChallenges.length < challengeCount) {
-  var chosenChallenge =
-    challenges[Math.floor(Math.random() * challenges.length)];
-  if (!selectedChallenges.includes(chosenChallenge)) {
-    selectedChallenges.push(chosenChallenge);
-  }
-}
-
-// Create targets dynamically
-const targetsContainer = document.getElementById(""targets-container"");
-
-// Function to create targets
-function createTargets() {
-
- 
-  for (let i = 0; i < selectedChallenges.length; i++) {
-    const target = document.createElement(""div"");
-    target.classList.add(""target"");
-    target.setAttribute(""data-index"", i); // Store index in data attribute
-    targetsContainer.appendChild(target);
-  }
-}
-
-// Function to simulate randomly shooting a target
-function shootRandomTarget() {
-wsClient.sendMessage(`rolling challange`);
-  const targets = document.querySelectorAll("".target"");
-  const randomTargetIndex = Math.floor(Math.random() * targets.length);
-  const randomTarget = targets[randomTargetIndex];
-
-  //clearing TEXT SOURCES before applying new challange
-  
-
-  // Add the target-highlight class to simulate the ""selection"" process
-  let selectionInProgress = true;
-  let counter = 0;
-  const highlightInterval = setInterval(() => {
-    const randomTargetIndex = Math.floor(Math.random() * targets.length); // Select random target
-    const target = targets[randomTargetIndex];
-
-    target.classList.add(""target-highlight""); // Highlight the target
-
-    // Reset previous target highlight after a short time
-    setTimeout(() => {
-      target.classList.remove(""target-highlight"");
-    }, 250);
-
-    counter++;
-    if (counter >= 10) {
-      // Run for 10 iterations before stopping
-      clearInterval(highlightInterval); // Stop the random highlight process
-      selectionInProgress = false;
-      target.classList.remove(""target-highlight"");
-      // After the selection process is finished, shoot the final target
-      randomTarget.classList.add(""target-shot""); // Shot effect on the selected target
-
-      // Select a random challenge
-      const randomChallenge =
-        challenges[Math.floor(Math.random() * challenges.length)];
-
-      // Display the selected challenge
-      const challengeResult = document.getElementById(""challenge-result"");
-      const selectedChallengeElement =
-        document.getElementById(""selected-challenge"");
-      const selectedChallengeDescElement = document.getElementById(
-        ""selected-challenge-description""
-      );
-      const textDisplayInterval = setInterval(() => {
-        selectedChallengeElement.textContent = `${randomChallenge.title} challenge!`;
-        selectedChallengeDescElement.textContent = `${randomChallenge.desc}`;
-        activeChallenge = `${randomChallenge.title} - ${randomChallenge.desc}`;
-               wsClient.sendMessage(JSON.stringify(randomChallenge));
-        clearInterval(textDisplayInterval);
-      }, 500);
-
-      challengeResult.classList.remove(""hidden"");
-    }
-  }, 500); // Change target every 500ms
-}
-
-// Initialize the game by creating targets and automatically shooting a random target
-createTargets();
-
-//updateTextSource(OBS_TEXT_SOURCE, activeChallenge);
-// Add a delay before starting the target selection process
-setTimeout(() => {
-  shootRandomTarget();
-}, 1500); // 1.5 second delay before the selection process starts
-
-
-
-";
-
-            string filePath = Path.Combine(fileDirectory, jsFileName);
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(filePath))
-                {
-                    writer.WriteLine(jsContent);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"An Error occured while writing to the file :{ex.Message}");
-            }
-
-        }
-
-
-        public void GenerateCSSFile(string cssFileName)
-        {
-
-
-            //check if file exists, if not then generate file
-            FileExists(cssFileName);
-
-            string cssContent = @"/* General styles */
+			string cssContent = @"/* General styles */
 body {
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    background-color: green;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+	font-family: 'Arial', sans-serif;
+	display: flex;
+	background-color: green;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
 
 }
 
 .container {
-    text-align: center;
-    padding: 20px;
+	text-align: center;
+	padding: 20px;
 }
 
 .title {
-    color: red;
+	color: red;
 }
 
 .title>h1 {
-    font-family: cursive;
-    font-size: 70px;
-    font-weight: bolder;
-    animation: colorchange 3s infinite;
+	font-family: cursive;
+	font-size: 70px;
+	font-weight: bolder;
+	animation: colorchange 3s infinite;
 }
 
 
 @keyframes colorchange {
-    0% {
-        color: red;
-    }
+	0% {
+		color: red;
+	}
 
-    50% {
-        color: blue
-    }
+	50% {
+		color: blue
+	}
 
-    100% {
-        color: green
-    }
+	100% {
+		color: green
+	}
 
 }
 
 
 
 h1 {
-    font-size: 2rem;
+	font-size: 2rem;
 }
 
 #targets-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin-top: 20px;
 }
 
 .target {
-    width: 80px;
-    height: 80px;
-    background-color: #fff;
-    border-radius: 50%;
-    border: 5px solid #333;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease;
+	width: 80px;
+	height: 80px;
+	background-color: #fff;
+	border-radius: 50%;
+	border: 5px solid #333;
+	position: relative;
+	cursor: pointer;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	transition: transform 0.2s ease;
 }
 
 .target:hover {
-    transform: scale(1.1);
+	transform: scale(1.1);
 }
 
 .target:active {
-    transform: scale(0.9);
+	transform: scale(0.9);
 }
 
 .target:before,
 .target:after {
-    content: """";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50%;
-    height: 50%;
-    border-radius: 50%;
-    background-color: transparent;
-    border: 2px solid #333;
-    transform: translate(-50%, -50%);
+	content: """";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 50%;
+	height: 50%;
+	border-radius: 50%;
+	background-color: transparent;
+	border: 2px solid #333;
+	transform: translate(-50%, -50%);
 }
 
 .target:before {
-    width: 70%;
-    height: 70%;
+	width: 70%;
+	height: 70%;
 }
 
 .target:after {
-    width: 40%;
-    height: 40%;
+	width: 40%;
+	height: 40%;
 }
 
 .target-shot {
-    animation: shotEffect 0.5s forwards;
+	animation: shotEffect 0.5s forwards;
 }
 
 @keyframes shotEffect {
-    0% {
-        transform: scale(1);
-        background-color: #fff;
-    }
+	0% {
+		transform: scale(1);
+		background-color: #fff;
+	}
 
-    50% {
-        transform: scale(1.2);
-        background-color: #FF6347;
-        /* Red color to show shot */
-    }
+	50% {
+		transform: scale(1.2);
+		background-color: #FF6347;
+		/* Red color to show shot */
+	}
 
-    100% {
-        transform: scale(1);
-        background-color: #FF6347;
-        /* Red color to indicate hit */
-    }
+	100% {
+		transform: scale(1);
+		background-color: #FF6347;
+		/* Red color to indicate hit */
+	}
 }
 
 .target-highlight {
-    animation: highlightEffect 0.3s alternate infinite;
+	animation: highlightEffect 0.3s alternate infinite;
 }
 
 @keyframes highlightEffect {
-    0% {
-        transform: scale(1);
-        border-color: #3498db;
-        box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
-    }
+	0% {
+		transform: scale(1);
+		border-color: #3498db;
+		box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+	}
 
-    100% {
-        transform: scale(1.2);
-        border-color: #e74c3c;
-        box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
-    }
+	100% {
+		transform: scale(1.2);
+		border-color: #e74c3c;
+		box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+	}
 }
 
 #challenge-result {
-    margin-top: 40px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: red;
+	margin-top: 40px;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: red;
 }
 
 #selected-challenge {
-    font-size: 50px;
+	font-size: 50px;
 }
 
 #selected-challenge-description {
-    font-size: 30px;
+	font-size: 30px;
 }
 
 #challenge-result.hidden {
-    display: none;
+	display: none;
 }
 
 #retry-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+	margin-top: 20px;
+	padding: 10px 20px;
+	background-color: #3498db;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
 }
 
 #retry-btn:hover {
-    background-color: #2980b9;
+	background-color: #2980b9;
 }";
 
-            string filePath = Path.Combine(fileDirectory, cssFileName);
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(filePath))
-                {
-                    writer.WriteLine(cssContent);
+			string filePath = Path.Combine(fileDirectory, cssFileName);
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(filePath))
+				{
+					writer.WriteLine(cssContent);
 
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"An Error occured while writing to the file :{ex.Message}");
-            }
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"An Error occured while writing to the file :{ex.Message}");
+			}
 
-        }
-
-
-        private static void FileExists(string fileName)
-        {
+		}
 
 
-            var result = File.Exists($"{fileDirectory}{fileName}");
-
-            if (!result)
-            {
-                File.Create($"{fileDirectory}{fileName}");
-            }
-
-        }
+		private static void FileExists(string fileName)
+		{
 
 
-    }
+			var result = File.Exists($"{fileDirectory}{fileName}");
+
+			if (!result)
+			{
+				File.Create($"{fileDirectory}{fileName}");
+			}
+
+		}
+
+
+	}
 }
