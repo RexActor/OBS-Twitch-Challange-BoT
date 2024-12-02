@@ -91,7 +91,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 				_logService.Log($"[WebSocket-Service][Action] Challange Selected Title: {challange.Title} Description: {challange.Desc}", Brushes.Orange);
 				if (_twitchService.TwitchIsConnected)
 				{
-					_twitchService.SendMessage($"We will do {challange.Title} challange");
+					_twitchService.SendMessage($"We will do {challange.Title} challange. Challange Requirements: {challange.Desc}");
 				}
 				else
 				{

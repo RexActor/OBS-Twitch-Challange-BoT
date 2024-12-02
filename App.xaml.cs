@@ -40,6 +40,7 @@ namespace OBS_Twitch_Challange_BoT
 			services.AddSingleton<ObsService>();
 			services.AddSingleton<HtmlService>();
 			services.AddSingleton<TwitchService>();
+			services.AddSingleton<GameControlService>();
 			services.AddSingleton<LogService>();
 			services.AddTransient<MainWindow>();
 			services.AddTransient<OptionsPage>();		

@@ -32,13 +32,15 @@ namespace OBS_Twitch_Challange_BoT
 		private readonly HtmlService _htmlService;
 		private readonly TwitchService _twitchService;
 		private readonly LogService _logService;
+		private readonly GameControlService _gameControlService;
 
 		// Parameterless constructor for WPF
 		public MainWindow() : this(null, new HtmlService(), null, null)
 		{
 
 			_logService = new LogService();
-			_twitchService = new TwitchService(_obsService, _logService);
+			_gameControlService = new GameControlService();
+			_twitchService = new TwitchService(_obsService, _logService,_gameControlService);
 			_obsService = new ObsService(_logService);
 
 		}

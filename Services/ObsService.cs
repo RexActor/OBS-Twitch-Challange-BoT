@@ -103,15 +103,28 @@ namespace OBS_Twitch_Challange_BoT.Services
 
 		public void UpdateTextSource(string sourceName, string text)
 		{
+			var currentSettigns = obsSocket.GetInputSettings(sourceName);
+#if DEBUG
 
-			JObject message = new JObject
+			Debug.WriteLine(currentSettigns.Settings);
+
+
+
+
+#endif 
+			if(currentSettigns is null)
 			{
-				{ "text", text }
-			};
+				_logService.Log($"[OBS-Service][ERROR] No settings found for source: {sourceName}", Brushes.Green);
+				return;
+			}
+
+			JObject updatedSettings = currentSettigns.Settings;
+
+			updatedSettings["text"] = text;
 
 			try
 			{
-				obsSocket.SetInputSettings(sourceName, message, false);
+				obsSocket.SetInputSettings(sourceName, updatedSettings, false);
 
 			}
 			catch (Exception ex)

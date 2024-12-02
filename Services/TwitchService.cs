@@ -18,6 +18,8 @@ using TwitchLib.Client;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
 using TwitchLib.PubSub.Models.Responses.Messages.AutomodCaughtMessage;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace OBS_Twitch_Challange_BoT.Services
 {
@@ -37,16 +39,23 @@ namespace OBS_Twitch_Challange_BoT.Services
 		TwitchClient twitchClient;
 		private readonly ObsService _obsService;
 		private readonly LogService _logService;
+		private readonly GameControlService _gameControlService;
+
+
+		bool inInventory = false;
+
+
 		public event Action<bool> TwitchConnectionChanged;
 
-		public TwitchService(ObsService obsService, LogService logService)
+
+		public TwitchService(ObsService obsService, LogService logService, GameControlService gameControlService)
 		{
 			_obsService = obsService;
 			_logService = logService;
 
 			LoadCommands();
 			InitializeFileWatcher();
-
+			_gameControlService = gameControlService;
 		}
 
 		private void InitializeFileWatcher()
@@ -261,10 +270,339 @@ namespace OBS_Twitch_Challange_BoT.Services
 				case "!leave":
 					HandleLeaveCommand(client, chatMessage);
 					break;
+
+				case "!walk":
+				case "!steer":
+					SimulateWalk(client, chatMessage, arguments);
+					break;
+				case "!turn":
+					SimulateTurn(client, chatMessage, arguments);
+					break;
+
+				case "!look":
+					SimulateLook(client, chatMessage, arguments);
+					break;
+				case "!plank":
+					TakePlank(client, chatMessage, arguments);
+					break;
+				case "!eat":
+					SimulateEat(client, chatMessage, arguments);
+					break;
+				case "!sword":
+					TakeSword(client, chatMessage, arguments);
+					break;
+				case "!attack":
+					SwordSwipe(client, chatMessage, arguments);
+					break;
+				case "!sniper":
+					TakeSniper(client, chatMessage, arguments);
+					break;
+				case "!use":
+					Simulateuse(client, chatMessage, arguments);
+					break;
+				
+				case "!take":
+					SimulatePickup(client, chatMessage, arguments);
+					break;
+				case "!select":
+					SelectItem(client, chatMessage, arguments);
+					break;
+
+				case "!jump": 
+					SimulateJump(client, chatMessage, arguments);
+					break;
+				case "!drop":
+					SimulateItemDrop(client, chatMessage, arguments);
+					break;
 			}
 
 
 		}
+
+		private void SimulateItemDrop(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Jumping [ {arguments} ]  ", Brushes.LightBlue);
+
+			
+				_gameControlService.SimulateScrollDown();  // Directly pass the non-nullable VirtualKeyCode
+			
+			
+		}
+
+		private void SimulateJump(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Jumping [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				
+				_ => VirtualKeyCode.SPACE  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void SelectItem(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Selecting Items [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				"right" => VirtualKeyCode.RIGHT,
+				"left" => VirtualKeyCode.LEFT,
+				"up" => VirtualKeyCode.UP,
+				"down" => VirtualKeyCode.DOWN,
+				_ => VirtualKeyCode.ESCAPE  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void SimulatePickup(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Picking Up Items [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.VK_F  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+
+		private void Simulateuse(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Using Items [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.VK_F  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void SwordSwipe(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] M1 spam [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.LBUTTON  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void TakePlank(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Grab plank [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.MBUTTON  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void TakeSniper(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Grab sniper [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.VK_2  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void TakeSword(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Grab sword [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.VK_1  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 0);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid  argument received.", Brushes.LightBlue);
+			}
+		}
+
+		private void SimulateEat(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Simulating eating [ {arguments} ]  ", Brushes.LightBlue);
+
+			var action = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				_ => VirtualKeyCode.XBUTTON1  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (action != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(action, 2000);  // Directly pass the non-nullable VirtualKeyCode
+				_gameControlService.SimulateLeftClick();
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.Red);
+			}
+
+		}
+		private void SimulateLook(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Simulating Rotation [ {arguments} ]  ", Brushes.LightBlue);
+			// Example of chat input handling
+			var direction = arguments.Trim().ToLowerInvariant() switch
+			{
+
+				"up" => -450,      // Look up (negative Y value)
+				"down" => 450,     // Look down (positive Y value)
+				_ => 0           // No movement if invalid
+			};
+
+			// Simulate the mouse turn based on the input
+			if (direction != 0)
+			{
+
+
+
+
+				_gameControlService.SimulateMouseLook(direction);  // Simulate horizontal turn
+
+
+
+
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.LightBlue);
+			}
+
+		}
+
+		private void SimulateTurn(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+			_logService.Log($"[Twitch-Service][CHANNEL] Simulating Rotation [ {arguments} ]  ", Brushes.LightBlue);
+			// Example of chat input handling
+			var direction = arguments.Trim().ToLowerInvariant() switch
+			{
+				"left" => -450,    // Move mouse left (negative value)
+				"right" => 450,    // Move mouse right (positive value)
+
+				_ => 0           // No movement if invalid
+			};
+
+			// Simulate the mouse turn based on the input
+			if (direction != 0)
+			{
+
+
+				_gameControlService.SimulateMouseTurn(direction);  // Simulate horizontal turn
+
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.LightBlue);
+			}
+
+		}
+
+		private void SimulateWalk(TwitchClient client, ChatMessage chatMessage, string arguments)
+		{
+
+
+			_logService.Log($"[Twitch-Service][CHANNEL] Simulating Walk [ {arguments} ]  ", Brushes.LightBlue);
+
+			var direction = arguments.Trim().ToLowerInvariant() switch
+			{
+				"left" => VirtualKeyCode.VK_A,
+				"right" => VirtualKeyCode.VK_D,
+				"forward" => VirtualKeyCode.VK_W,
+				"back" => VirtualKeyCode.VK_S,
+				_ => VirtualKeyCode.ESCAPE  // Use a fallback key (e.g., VK_NONE)
+			};
+
+			if (direction != VirtualKeyCode.ESCAPE)
+			{
+				_gameControlService.SimulateKeyPress(direction,500);  // Directly pass the non-nullable VirtualKeyCode
+			}
+			else
+			{
+				_logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.LightBlue);
+			}
+
+
+		}
+
+
 
 		private void HandleChallangeCommand(TwitchClient client, ChatMessage chatMessage)
 		{
