@@ -20,7 +20,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
         public void SelectItem(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Selecting Items [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEMS] Selecting Items [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -38,13 +38,13 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEMS] Invalid argument received.", Brushes.Wheat);
             }
         }
 
         public void SimulateEat(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Simulating eating [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][EAT] Simulating eating [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -59,14 +59,14 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.Red);
+                _logService.Log("[SOT-SERVICE][EAT] Invalid movement argument received.", Brushes.Wheat);
             }
 
         }
 
         public void SimulateItemDrop(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Jumping [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] Drop Item [ {arguments} ]  ", Brushes.Wheat);
 
 
             _gameControlService.SimulateScrollDown();  // Directly pass the non-nullable VirtualKeyCode
@@ -76,7 +76,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
         public void SimulateJump(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Jumping [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][JUMP] Jumping [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -91,12 +91,12 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.Wheat);
             }
         }
         public void SimulateLook(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Simulating Rotation [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][LOOK] Looking direction [ {arguments} ]  ", Brushes.Wheat);
             // Example of chat input handling
             var direction = arguments.Trim().ToLowerInvariant() switch
             {
@@ -109,26 +109,18 @@ namespace OBS_Twitch_Challange_BoT.Services
             // Simulate the mouse turn based on the input
             if (direction != 0)
             {
-
-
-
-
                 _gameControlService.SimulateMouseLook(direction);  // Simulate horizontal turn
-
-
-
-
-            }
+                            }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][LOOK] Invalid Look direction argument received.", Brushes.Wheat);
             }
 
         }
 
         public void SimulatePickup(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Picking Up Items [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] Picking Up Items [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -142,13 +134,13 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEM] Invalid argument received.", Brushes.Wheat);
             }
         }
 
         public void SimulateTurn(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Simulating Rotation [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ROTATION] Simulating Rotation [ {arguments} ]  ", Brushes.Wheat);
             // Example of chat input handling
             var direction = arguments.Trim().ToLowerInvariant() switch
             {
@@ -168,7 +160,7 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ROTATION] Invalid movement argument received.", Brushes.Wheat);
             }
 
         }
@@ -176,7 +168,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 
         public void Simulateuse(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Using Items [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] Using Items [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -190,7 +182,7 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEM] Invalid argument received.", Brushes.Wheat);
             }
         }
 
@@ -198,7 +190,7 @@ namespace OBS_Twitch_Challange_BoT.Services
         {
 
 
-            _logService.Log($"[Twitch-Service][CHANNEL] Simulating Walk [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][WALK] Simulating Walk [ {arguments} ]  ", Brushes.Wheat);
 
             var direction = arguments.Trim().ToLowerInvariant() switch
             {
@@ -215,15 +207,15 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid movement argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][WALK] Invalid movement argument received.", Brushes.Wheat);
             }
 
 
         }
 
-        public void SwordSwipe(TwitchClient client, ChatMessage chatMessage, string arguments)
+        public void Attack(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] M1 spam [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] M1 spam [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -237,13 +229,13 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEM] Invalid argument received.", Brushes.Wheat);
             }
         }
 
         public void TakePlank(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Grab plank [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] Grab plank [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -257,13 +249,13 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEM] Invalid argument received.", Brushes.Wheat);
             }
         }
 
         public void TakeSniper(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Grab sniper [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] Grab sniper [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -277,13 +269,13 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEM] Invalid argument received.", Brushes.Wheat);
             }
         }
 
         public void TakeSword(TwitchClient client, ChatMessage chatMessage, string arguments)
         {
-            _logService.Log($"[Twitch-Service][CHANNEL] Grab sword [ {arguments} ]  ", Brushes.LightBlue);
+            _logService.Log($"[SOT-SERVICE][ITEM] Grab sword [ {arguments} ]  ", Brushes.Wheat);
 
             var action = arguments.Trim().ToLowerInvariant() switch
             {
@@ -297,7 +289,7 @@ namespace OBS_Twitch_Challange_BoT.Services
             }
             else
             {
-                _logService.Log("[Twitch-Service][CHANNEL] Invalid  argument received.", Brushes.LightBlue);
+                _logService.Log("[SOT-SERVICE][ITEM] Invalid  argument received.", Brushes.Wheat);
             }
         }
     }

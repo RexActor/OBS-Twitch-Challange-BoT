@@ -295,7 +295,7 @@ namespace OBS_Twitch_Challange_BoT.Services
                     _seaOfThievesControl.TakeSword(client, chatMessage, arguments);
 					break;
 				case "!attack":
-                    _seaOfThievesControl.SwordSwipe(client, chatMessage, arguments);
+                    _seaOfThievesControl.Attack(client, chatMessage, arguments);
 					break;
 				case "!sniper":
                     _seaOfThievesControl.TakeSniper(client, chatMessage, arguments);
@@ -334,7 +334,7 @@ namespace OBS_Twitch_Challange_BoT.Services
 					return;
 				}
 
-				_logService.Log($"[Twitch-Service][ACTION] Handling Challange Command", Brushes.LightBlue);
+				_logService.Log($"[Twitch-Service][ACTION] Handling Challenge Command", Brushes.LightBlue);
 
 				//Deactivating Text and Description sources
 				_obsService.DeActivateSource(Properties.Settings.Default.ObsScene, Properties.Settings.Default.ObsSourceTitle);
