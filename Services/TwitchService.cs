@@ -24,7 +24,7 @@ using WindowsInput.Native;
 namespace OBS_Twitch_Challange_BoT.Services
 {
 	public class TwitchService
-    {
+	{
 
 		string userName { get; set; }
 		string oauthToken { get; set; }
@@ -279,50 +279,50 @@ namespace OBS_Twitch_Challange_BoT.Services
 					_seaOfThievesControl.SimulateWalk(client, chatMessage, arguments);
 					break;
 				case "!turn":
-                    _seaOfThievesControl.SimulateTurn(client, chatMessage, arguments);
+					_seaOfThievesControl.SimulateTurn(client, chatMessage, arguments);
 					break;
 
 				case "!look":
-                    _seaOfThievesControl.SimulateLook(client, chatMessage, arguments);
+					_seaOfThievesControl.SimulateLook(client, chatMessage, arguments);
 					break;
 				case "!plank":
-                    _seaOfThievesControl.TakePlank(client, chatMessage, arguments);
+					_seaOfThievesControl.TakePlank(client, chatMessage, arguments);
 					break;
 				case "!eat":
-                    _seaOfThievesControl.SimulateEat(client, chatMessage, arguments);
+					_seaOfThievesControl.SimulateEat(client, chatMessage, arguments);
 					break;
 				case "!sword":
-                    _seaOfThievesControl.TakeSword(client, chatMessage, arguments);
+					_seaOfThievesControl.TakeSword(client, chatMessage, arguments);
 					break;
 				case "!attack":
-                    _seaOfThievesControl.Attack(client, chatMessage, arguments);
+					_seaOfThievesControl.Attack(client, chatMessage, arguments);
 					break;
 				case "!sniper":
-                    _seaOfThievesControl.TakeSniper(client, chatMessage, arguments);
+					_seaOfThievesControl.TakeSniper(client, chatMessage, arguments);
 					break;
 				case "!use":
-                    _seaOfThievesControl.Simulateuse(client, chatMessage, arguments);
+					_seaOfThievesControl.Simulateuse(client, chatMessage, arguments);
 					break;
 				
 				case "!take":
-                    _seaOfThievesControl.SimulatePickup(client, chatMessage, arguments);
+					_seaOfThievesControl.SimulatePickup(client, chatMessage, arguments);
 					break;
 				case "!select":
-                    _seaOfThievesControl.SelectItem(client, chatMessage, arguments);
+					_seaOfThievesControl.SelectItem(client, chatMessage, arguments);
 					break;
 
 				case "!jump":
-                    _seaOfThievesControl.SimulateJump(client, chatMessage, arguments);
+					_seaOfThievesControl.SimulateJump(client, chatMessage, arguments);
 					break;
 				case "!drop":
-                    _seaOfThievesControl.SimulateItemDrop(client, chatMessage, arguments);
+					_seaOfThievesControl.SimulateItemDrop(client, chatMessage, arguments);
 					break;
 			}
 
 
 		}
 
-        private void HandleChallangeCommand(TwitchClient client, ChatMessage chatMessage)
+		private void HandleChallangeCommand(TwitchClient client, ChatMessage chatMessage)
 		{
 			if (chatMessage.IsModerator || chatMessage.IsBroadcaster)
 			{
