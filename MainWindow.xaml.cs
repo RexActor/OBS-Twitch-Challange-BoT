@@ -33,19 +33,21 @@ namespace OBS_Twitch_Challange_BoT
 		private readonly TwitchService _twitchService;
 		private readonly LogService _logService;
 		private readonly GameControlService _gameControlService;
+		private readonly SeaOfThievesControl _seaOfThievesControl;
 
 		// Parameterless constructor for WPF
-		public MainWindow() : this(null, new HtmlService(), null, null)
+		public MainWindow() : this(null, new HtmlService(), null, null,null)
 		{
 
 			_logService = new LogService();
 			_gameControlService = new GameControlService();
-			_twitchService = new TwitchService(_obsService, _logService,_gameControlService);
+			_twitchService = new TwitchService(_obsService, _logService,_seaOfThievesControl);
+			_seaOfThievesControl = new SeaOfThievesControl(_gameControlService,_logService);
 			_obsService = new ObsService(_logService);
 
 		}
 
-		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService, LogService logService)
+		public MainWindow(ObsService obsService, HtmlService htmlService, TwitchService twitchService, LogService logService,SeaOfThievesControl seaOfThievesControl)
 		{
 
 			InitializeComponent();
@@ -56,7 +58,7 @@ namespace OBS_Twitch_Challange_BoT
 			_obsService = obsService;
 			_twitchService = twitchService;
 			_logService = logService;
-
+			_seaOfThievesControl = seaOfThievesControl;
 
 			_obsService.ObsConnectionChanged += _obsService_ObsConnectionChanged;
 			_twitchService.TwitchConnectionChanged += _twitchService_TwitchConnectionChanged;

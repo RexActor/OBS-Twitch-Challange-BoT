@@ -41,6 +41,7 @@ namespace OBS_Twitch_Challange_BoT
 			services.AddSingleton<HtmlService>();
 			services.AddSingleton<TwitchService>();
 			services.AddSingleton<GameControlService>();
+			services.AddSingleton<SeaOfThievesControl>();
 			services.AddSingleton<LogService>();
 			services.AddTransient<MainWindow>();
 			services.AddTransient<OptionsPage>();		
